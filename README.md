@@ -8,15 +8,31 @@ Welcome to the Netify Api. This projects involves creating a minimal API around 
 - [Functionality](#functionality-highlights)
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
+- [Api Reference](#api-reference)
 - [Made by](#made-by)
 - [Contributions](#contributions)
 
 ## Key Features
+- **Store Users with Usernames**
+- **Store Genres**
+- **Store Artists**
+- **User Interest in Genres and Artists**
+- **Store Songs Linked to Genres and Artists**
+
 ## Functionality Highlights
+- **Retrieve All Users**
+- **Retrieve Genres Linked to a Specific Person**
+- **Retrieve Artists Linked to a Specific Person**
+- **Retrieve Songs Linked to a Specific Person**
+- **Connect a Person to a New Genre, Artist, and Song**
+      
 ## Getting Started
 1. Clone the project.
 2. Open it in your development environment.
 3. Run the program and explore the various features.
+
+## Api Reference
+- https://developer.spotify.com/documentation/web-api
 ## Prerequisites
 Before you begin, ensure you have met the following requirements:
 
