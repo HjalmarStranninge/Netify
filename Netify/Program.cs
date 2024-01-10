@@ -15,6 +15,7 @@ namespace Netify
             app.MapGet("/", () => "Welcome to the Netify Api. This projects involves creating a minimal API around the Spotify open access api.\n" +
 "Retrieve All Users\r\nRetrieve Genres Linked to a Specific Person\r\nRetrieve Artists Linked to a Specific Person\r\nRetrieve Songs Linked to a Specific Person\r\nConnect a Person to a New Genre, Artist, and Song");
 
+
             // GET
             app.MapGet("/users", () => ""); // Get all users in db
             app.MapGet("/user/{userId}", () => ""); // Get a specific user
@@ -26,6 +27,8 @@ namespace Netify
             app.MapPost("/user/{userId}/genre/{genreId}", () => ""); // Add a specific user to a genre
             app.MapPost("/user/{userId}/artist/{artistId}", () => ""); // Add a specific user to a artist
             app.MapPost("/user/{userId}/songs/{songId}", () => ""); // Add a specific user to a song
+
+            app.Run();
         }
     }
 }
