@@ -21,12 +21,12 @@ namespace Netify
             app.MapGet("/user/{userId}", () => ""); // Get a specific user
             app.MapGet("/user/{userId}/genres", () => ""); // Get a specfic user and their liked genres
             app.MapGet("/users/{userId}/artists", () => ""); // Get a specific user and ther liked artists
-            app.MapGet("/users/{userId}/songs", () => ""); // Get a specific user and ther liked songs
+            app.MapGet("/users/{userId}/tracks", () => ""); // Get a specific user and ther liked tracks
 
             // POST
             app.MapPost("/user/{userId}/genre/{genreId}", () => ""); // Add a specific user to a genre
             app.MapPost("/user/{userId}/artist/{artistId}", () => ""); // Add a specific user to a artist
-            app.MapPost("/user/{userId}/songs/{songId}", () => ""); // Add a specific user to a song
+            app.MapPost("/user/{userId}/tracks/{trackId}", () => ""); // Add a specific user to a tracks
 
             app.Run();
         }
