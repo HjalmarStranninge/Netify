@@ -1,15 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using NetifyAPI.Data;
+using NetifyAPI.Spotify;
 
 namespace Netify
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             string connectionString = builder.Configuration.GetConnectionString("NetifyContext");
             builder.Services.AddDbContext<NetifyContext>(opt => opt.UseSqlServer(connectionString));
+
+            string clientId = builder.Configuration.GetValue<string>("Spotify:ClientId");
+            string clientSecret = builder.Configuration.GetValue<string>("Spotify:ClientSecret");
+            builder.Services.AddSingleton<ISpotifyHandler>(x => new SpotifyHandler(clientId, clientSecret));
+
             var app = builder.Build();
 
             app.MapGet("/", () => "Welcome to the Netify Api. This projects involves creating a minimal API around the Spotify open access api.\n" +
@@ -27,6 +33,9 @@ namespace Netify
             app.MapPost("/user/{userId}/genre/{genreId}", () => ""); // Add a specific user to a genre
             app.MapPost("/user/{userId}/artist/{artistId}", () => ""); // Add a specific user to a artist
             app.MapPost("/user/{userId}/tracks/{trackId}", () => ""); // Add a specific user to a tracks
+
+            // Fetches a new access token from the Spotify API.
+            app.MapGet("/accesstoken", async (ISpotifyHandler handler) => await handler.GetAccessToken());
 
             app.Run();
         }
