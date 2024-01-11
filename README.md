@@ -6,6 +6,7 @@ Welcome to the Netify Api. This projects involves creating a minimal API around 
 ## Table of Contents
 - [Features](#key-features)
 - [Functionality](#functionality-highlights)
+- [Using Endpoints](#using-endpoints)
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
 - [Api Reference](#api-reference)
@@ -25,6 +26,19 @@ Welcome to the Netify Api. This projects involves creating a minimal API around 
 - **Retrieve Artists Linked to a Specific Person**
 - **Retrieve Songs Linked to a Specific Person**
 - **Connect a Person to a New Genre, Artist, and Song**
+
+## Using Endpoints
+**GET** endpoints
+- /users - **Get All Users**
+- /user/{userId} - **Get a Specific User**
+- /user/{userId}/genres - **Get a Specific User and Interests**
+- /user/{userId}/artists - **Get a Specific User and Artists**
+- /user/{userId}/tracks - **Get a Specific User and Tracks**
+
+**POST** endpoints
+- /user/{userId}/genre/{genreId} - **Link a Specific User to a Genre**
+- /user/{userId}/artist/{artistId} - **Link a Specific User and Artist**
+- /user/{userId}/tracks/{trackId} - **Link a Specific User and Track**
       
 ## Getting Started
 1. Clone the project.
