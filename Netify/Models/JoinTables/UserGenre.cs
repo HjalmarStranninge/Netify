@@ -2,6 +2,7 @@
 {
     public class UserGenre
     {
+        public int UserGenreId { get; set; }
         public int UserId { get; set; }
         public virtual User User { get; set; }
 

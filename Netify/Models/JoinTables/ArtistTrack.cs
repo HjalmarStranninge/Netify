@@ -2,6 +2,7 @@
 {
     public class ArtistTrack
     {
+        public int ArtistTrackId { get; set; }
         public int ArtistId { get; set; }
         public virtual Artist Artists { get; set; }
 

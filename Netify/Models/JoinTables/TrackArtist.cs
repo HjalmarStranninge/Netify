@@ -2,6 +2,7 @@
 {
     public class TrackArtist
     {
+        public int TrackArtistId { get; set; }
         public int TrackId { get; set; }
         public virtual Track Tracks { get; set; }
 
