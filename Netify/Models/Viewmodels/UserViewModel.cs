@@ -7,8 +7,8 @@ namespace NetifyAPI.Models.Viewmodels
         public int UserId { get; set; }
         public string Username { get; set; }
 
-        public virtual ICollection<UserGenre> UserGenres { get; set; }
-        public virtual ICollection<UserArtist> UserArtists { get; set; }
-        public virtual ICollection<UserTrack> UserTracks { get; set; }
+        public virtual List<GenreViewModel> UserGenres { get; set; }
+        public virtual List<ArtistViewModel> UserArtists { get; set; }
+        public virtual List<TrackViewModel> UserTracks { get; set; }
     }
 }

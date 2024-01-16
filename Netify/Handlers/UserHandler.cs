@@ -14,6 +14,7 @@ namespace NetifyAPI.Handlers
         {
             UserViewModel[] result = context.Users
                 //.Include?? vad vill vi inkludera i listvy?
+                // skapa separat viewmodel för bara userid och username?
                 .Select(u => new UserViewModel()
                 {
                     UserId = u.UserId,
@@ -27,7 +28,7 @@ namespace NetifyAPI.Handlers
         // Search users.(Main use to get userId)
         public static IResult SearchUsers(NetifyContext context, string query)
         {
-            var result = context.Users
+            var searchUser = context.Users
                 .Where(u => u.Username.Contains(query))
                 .Select(u => new UserViewModel()
                 {
@@ -36,7 +37,7 @@ namespace NetifyAPI.Handlers
                 })
                 .ToList();
 
-            return Results.Json(result);
+            return Results.Json(searchUser);
         }
 
         // View user
@@ -47,7 +48,7 @@ namespace NetifyAPI.Handlers
                 .Include(u => u.UserGenres)  // Include the UserGenres navigation property
                     .ThenInclude(ug => ug.Genre)  // Include the Genre navigation property within UserGenres    
                 .Include(u => u.UserArtists)
-                    .ThenInclude(ua  => ua.Artists)
+                    .ThenInclude(ua => ua.Artists)
                 .Include(u => u.UserTracks)
                     .ThenInclude(ut => ut.Tracks)
                 .Where(u => u.UserId == userId)
@@ -68,7 +69,7 @@ namespace NetifyAPI.Handlers
             {
                 UserId = user.UserId,
                 Username = user.Username,
-                UserGenres = (ICollection<Models.JoinTables.UserGenre>)user.UserGenres
+                UserGenres = user.UserGenres
                     .Select(g => new GenreViewModel()
                     {
                         //ska id inkluderas för att kunna söka efter dessa?
@@ -79,7 +80,7 @@ namespace NetifyAPI.Handlers
                     })
                     .Take(genreLimit)
                     .ToList(),
-                UserArtists = (ICollection<Models.JoinTables.UserArtist>)user.UserArtists
+                UserArtists = user.UserArtists
                     .Select(a => new ArtistViewModel()
                     {
                         ArtistId = a.ArtistId,
@@ -87,7 +88,7 @@ namespace NetifyAPI.Handlers
                     })
                     .Take(artistLimit)
                     .ToList(),
-                UserTracks = (ICollection<Models.JoinTables.UserTrack>)user.UserTracks
+                UserTracks = user.UserTracks
                     .Select(t => new TrackViewModel()
                     {
                         TrackId = t.TrackId,
@@ -107,7 +108,7 @@ namespace NetifyAPI.Handlers
 
         }
         // Get a specfic user and their liked genres
-        public static IResult UserGenre(NetifyContext context, int userId)
+        public static IResult UserLikedGenre(NetifyContext context, int userId)
         {
             // can be extracted to seperate method
             User? user = context.Users
@@ -129,7 +130,52 @@ namespace NetifyAPI.Handlers
                 .ToList();
             return Results.Json(genreList);
         }
-            // Get a specific user and ther liked artists
-            // Get a specific user and ther liked tracks
+
+        public static IResult UserLikedArtists(NetifyContext context, int userId)
+        {
+            // can be extracted to seperate method
+            User? user = context.Users
+                .Include(u => u.UserGenres)
+                    .ThenInclude(u => u.Genre)
+                .Where(u => u.UserId == userId)
+                .SingleOrDefault();
+            if (user == null)
+            {
+                return Results.NotFound();
+            }
+
+            List<ArtistViewModel> artistList = user.UserArtists
+                .Select(a => new ArtistViewModel()
+                {
+                    ArtistId = a.ArtistId,
+                    ArtistName = a.Artists.ArtistName,
+                })
+                .ToList();
+            return Results.Json(artistList);
         }
+
+        public static IResult UserLikedTracks(NetifyContext context, int userId)
+        {
+            // can be extracted to seperate method
+            User? user = context.Users
+                .Include(u => u.UserGenres)
+                    .ThenInclude(u => u.Genre)
+                .Where(u => u.UserId == userId)
+                .SingleOrDefault();
+            if (user == null)
+            {
+                return Results.NotFound();
+            }
+
+            List<TrackViewModel> trackList = user.UserTracks
+                .Select(t => new TrackViewModel()
+                {
+                    TrackId = t.TrackId,
+                    Title = t.Tracks.Title,
+                    TrackArtists = t.Tracks.TrackArtists
+                })
+                .ToList();
+            return Results.Json(trackList);
+        }
+    }
 }
