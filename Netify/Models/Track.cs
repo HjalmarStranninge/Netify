@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using NetifyAPI.Models.JoinTables;
 
 namespace NetifyAPI.Models
 {
@@ -9,7 +10,7 @@ namespace NetifyAPI.Models
         public string SpotifySongId { get; set; }
         public string Title { get; set;}
 
-        public virtual ICollection<Artist> Artists { get; set; }
-        public virtual Genre? Genre { get; set; }
+        public virtual ICollection<TrackArtist> TrackArtists { get; set; }
+        public virtual ICollection<TrackGenre> TrackGenres { get; set; }
     }
 }
