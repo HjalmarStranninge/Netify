@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using NetifyAPI.Data;
 using NetifyAPI.Models;
 using NetifyAPI.Models.Viewmodels;
+using NetifyAPI.Models.JoinTables;
 
 namespace NetifyAPI.Handlers
 {
@@ -43,11 +44,15 @@ namespace NetifyAPI.Handlers
         {
             // can be extracted to seperate method
             User? user = context.Users
-                .Include(u => u.Genre)
-                .Include(u => u.Artists)
-                .Include(u => u.Tracks)
+                .Include(u => u.UserGenres)  // Include the UserGenres navigation property
+                    .ThenInclude(ug => ug.Genre)  // Include the Genre navigation property within UserGenres    
+                .Include(u => u.UserArtists)
+                    .ThenInclude(ua  => ua.Artists)
+                .Include(u => u.UserTracks)
+                    .ThenInclude(ut => ut.Tracks)
                 .Where(u => u.UserId == userId)
                 .SingleOrDefault();
+            // kommer detta köras långsamt eller kan man snabba upp if satsen nedan genom att köra den tidigare?
             if (user == null)
             {
                 return Results.NotFound();
@@ -63,34 +68,34 @@ namespace NetifyAPI.Handlers
             {
                 UserId = user.UserId,
                 Username = user.Username,
-                Genre = user.Genre
+                UserGenres = (ICollection<Models.JoinTables.UserGenre>)user.UserGenres
                     .Select(g => new GenreViewModel()
                     {
                         //ska id inkluderas för att kunna söka efter dessa?
                         // ska vi lägga till "user till Genre" klass?
                         //för att sätta relationen flera till flera
                         GenreId = g.GenreId,
-                        Title = g.Title,
+                        Title = g.Genre.Title,
                     })
                     .Take(genreLimit)
                     .ToList(),
-                Artists = user.Artists
+                UserArtists = (ICollection<Models.JoinTables.UserArtist>)user.UserArtists
                     .Select(a => new ArtistViewModel()
                     {
                         ArtistId = a.ArtistId,
-                        ArtistName = a.ArtistName,
+                        ArtistName = a.Artists.ArtistName,
                     })
                     .Take(artistLimit)
                     .ToList(),
-                Tracks = user.Tracks
+                UserTracks = (ICollection<Models.JoinTables.UserTrack>)user.UserTracks
                     .Select(t => new TrackViewModel()
                     {
                         TrackId = t.TrackId,
-                        Title = t.Title,
-                        Artists = t.Artists
+                        Title = t.Tracks.Title,
+                        TrackArtists = (ICollection<TrackArtist>)t.Tracks.TrackArtists
                             .Select(a => new ArtistViewModel()
                             {
-                                ArtistName = a.ArtistName,
+                                ArtistName = a.Artists.ArtistName,
                             })
                             .ToList(),
                     })
@@ -106,7 +111,8 @@ namespace NetifyAPI.Handlers
         {
             // can be extracted to seperate method
             User? user = context.Users
-                .Include(u => u.Genre)
+                .Include(u => u.UserGenres)
+                    .ThenInclude(u => u.Genre)
                 .Where(u => u.UserId == userId)
                 .SingleOrDefault();
             if (user == null)
@@ -114,11 +120,11 @@ namespace NetifyAPI.Handlers
                 return Results.NotFound();
             }
 
-            List<GenreViewModel> genreList = user.Genre
+            List<GenreViewModel> genreList = user.UserGenres
                 .Select(g => new GenreViewModel()
                 {
-                    GenreId = g.GenreId,
-                    Title = g.Title,
+                    GenreId = g.Genre.GenreId,
+                    Title = g.Genre.Title,
                 })
                 .ToList();
             return Results.Json(genreList);
