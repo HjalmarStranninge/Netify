@@ -21,7 +21,6 @@
 
     <Folder Include="Models\Dtos\" />
     <Folder Include="Data\" />
-    <Folder Include="Models\Viewmodels\" />
 
   </ItemGroup>
 
