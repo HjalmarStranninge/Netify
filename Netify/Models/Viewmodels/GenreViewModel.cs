@@ -4,7 +4,8 @@
     {
         public int GenreId { get; set; }
         public string Title { get; set; }
-        public ICollection<ArtistViewModel> Artists { get; set; }
-        public ICollection<TrackViewModel> Tracks { get; set; }
+
+        public virtual ICollection<Artist> Artists { get; set; }
+        public virtual ICollection<Track> Tracks { get; set; }
     }
 }
