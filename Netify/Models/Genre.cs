@@ -1,5 +1,4 @@
-﻿using NetifyAPI.Models.JoinTables;
-
+﻿
 namespace NetifyAPI.Models
 {
     public class Genre
