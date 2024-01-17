@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace NetifyAPI.Models.Dtos
+namespace NetifyAPI.Models.Dtos.Artists
 {
     public class ArtistDto
     {
@@ -9,5 +9,8 @@ namespace NetifyAPI.Models.Dtos
 
         [JsonPropertyName("id")]
         public string SpotifyArtistId { get; set; }
+
+        [JsonPropertyName("genres")]
+        public ICollection<string> Genres { get; set; }
     }
 }

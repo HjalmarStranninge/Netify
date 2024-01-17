@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using NetifyAPI.Models.Viewmodels;
+using System.Text.Json.Serialization;
 
 namespace NetifyAPI.Models.Dtos.Tracks
 {
@@ -8,9 +9,9 @@ namespace NetifyAPI.Models.Dtos.Tracks
         public string Title { get; set; }
 
         [JsonPropertyName("id")]
-        public string SpotifySongId { get; set; }
+        public string SpotifyTrackId { get; set; }
 
         [JsonPropertyName("artists")]
-        public List<ArtistDto> Artists { get; set; }
+        public List<TrackArtistViewModel> Artists { get; set; }
     }
 }
