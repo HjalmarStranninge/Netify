@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using NetifyAPI.Models.JoinTables;
 
 namespace NetifyAPI.Models
 {
@@ -13,7 +14,7 @@ namespace NetifyAPI.Models
         public string ArtistName { get; set; }
         public string Bio { get; set; }
 
-        public virtual ICollection<Track> Tracks { get; set; }
-        public virtual Genre? Genre { get; set; }
+        public virtual ICollection<ArtistTrack> ArtistTracks { get; set; }
+        public virtual ICollection<ArtistGenre> ArtistGenres { get; set; }
     }
 }

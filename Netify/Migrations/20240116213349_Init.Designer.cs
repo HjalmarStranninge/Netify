@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetifyAPI.Data;
 
@@ -11,9 +12,10 @@ using NetifyAPI.Data;
 namespace NetifyAPI.Migrations
 {
     [DbContext(typeof(NetifyContext))]
-    partial class NetifyContextModelSnapshot : ModelSnapshot
+    [Migration("20240116213349_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,94 +73,74 @@ namespace NetifyAPI.Migrations
 
             modelBuilder.Entity("NetifyAPI.Models.JoinTables.ArtistGenre", b =>
                 {
-                    b.Property<int>("ArtistGenreId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ArtistGenreId"), 1L, 1);
-
                     b.Property<int>("ArtistId")
                         .HasColumnType("int");
 
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
-                    b.HasKey("ArtistGenreId");
+                    b.Property<int>("ArtistGenreId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ArtistId");
+                    b.HasKey("ArtistId", "GenreId");
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("ArtistGenre");
+                    b.ToTable("ArtistGenres");
                 });
 
             modelBuilder.Entity("NetifyAPI.Models.JoinTables.ArtistTrack", b =>
                 {
-                    b.Property<int>("ArtistTrackId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ArtistTrackId"), 1L, 1);
-
                     b.Property<int>("ArtistId")
                         .HasColumnType("int");
 
                     b.Property<int>("TrackId")
                         .HasColumnType("int");
 
-                    b.HasKey("ArtistTrackId");
+                    b.Property<int>("ArtistTrackId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ArtistId");
+                    b.HasKey("ArtistId", "TrackId");
 
                     b.HasIndex("TrackId");
 
-                    b.ToTable("ArtistTrack");
+                    b.ToTable("ArtistTracks");
                 });
 
             modelBuilder.Entity("NetifyAPI.Models.JoinTables.TrackArtist", b =>
                 {
-                    b.Property<int>("TrackArtistId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("TrackId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrackArtistId"), 1L, 1);
 
                     b.Property<int>("ArtistId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TrackId")
+                    b.Property<int>("TrackArtistId")
                         .HasColumnType("int");
 
-                    b.HasKey("TrackArtistId");
+                    b.HasKey("TrackId", "ArtistId");
 
                     b.HasIndex("ArtistId");
 
-                    b.HasIndex("TrackId");
-
-                    b.ToTable("TrackArtist");
+                    b.ToTable("TrackArtists");
                 });
 
             modelBuilder.Entity("NetifyAPI.Models.JoinTables.TrackGenre", b =>
                 {
-                    b.Property<int>("TrackGenreId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("TrackId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrackGenreId"), 1L, 1);
 
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TrackId")
+                    b.Property<int>("TrackGenreId")
                         .HasColumnType("int");
 
-                    b.HasKey("TrackGenreId");
+                    b.HasKey("TrackId", "GenreId");
 
                     b.HasIndex("GenreId");
 
-                    b.HasIndex("TrackId");
-
-                    b.ToTable("TrackGenre");
+                    b.ToTable("TrackGenres");
                 });
 
             modelBuilder.Entity("NetifyAPI.Models.JoinTables.UserArtist", b =>

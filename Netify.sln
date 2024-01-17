@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetifyAPI", "Netify\NetifyAPI.csproj", "{CFD57784-7955-42C7-8A2D-E7B160C626FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetifyAPI", "Netify\NetifyAPI.csproj", "{CFD57784-7955-42C7-8A2D-E7B160C626FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetifyClient", "NetifyClient\NetifyClient.csproj", "{C72E44AE-AB10-4BE4-8C7F-CDF124264064}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetifyClient", "NetifyClient\NetifyClient.csproj", "{C72E44AE-AB10-4BE4-8C7F-CDF124264064}"
+	ProjectSection(ProjectDependencies) = postProject
+		{03BEE0B6-B985-4A8C-B807-3E71A77703B1} = {03BEE0B6-B985-4A8C-B807-3E71A77703B1}
+		{CFD57784-7955-42C7-8A2D-E7B160C626FB} = {CFD57784-7955-42C7-8A2D-E7B160C626FB}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetifyAPITests", "NetifyAPITests\NetifyAPITests.csproj", "{03BEE0B6-B985-4A8C-B807-3E71A77703B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetifyAPITests", "NetifyAPITests\NetifyAPITests.csproj", "{03BEE0B6-B985-4A8C-B807-3E71A77703B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
