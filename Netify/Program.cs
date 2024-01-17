@@ -36,10 +36,13 @@ namespace Netify
             app.MapPost("/user/{userId}/artist/{artistId}", () => ""); // Add a specific user to a artist
             app.MapPost("/user/{userId}/tracks/{trackId}", () => ""); // Add a specific user to a tracks
 
-            // Fetches a new access token from the Spotify API.
-            app.MapGet("/accesstoken", async (ISpotifyHandler handler) => await handler.GetAccessToken());
-
-            app.MapGet("/search", async (ISpotifyHandler handler) => await handler.SearchForTracks("test"));
+            app.MapGet("/tracksearch", async (ISpotifyHandler handler, string query, int offset) => {
+                if (String.IsNullOrEmpty(query))
+                {
+                    throw new ArgumentException("no query");
+                }
+                return await handler.SearchForTracks(query, offset);
+            });
 
             app.Run();
         }

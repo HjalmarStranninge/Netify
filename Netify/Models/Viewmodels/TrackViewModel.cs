@@ -1,14 +1,14 @@
 ﻿
 using NetifyAPI.Models.JoinTables;
+using System.Text.Json.Serialization;
 
 namespace NetifyAPI.Models.Viewmodels
 {
     public class TrackViewModel
     {
-        public int TrackId { get; set; }
-        public string SpotifySongId { get; set; }
+        [JsonIgnore]
+        public string SpotifyTrackId { get; set; }
         public string Title { get; set; }
-        public ICollection<ArtistViewModel> Artists { get; set; }
-        public virtual ICollection<TrackArtist> TrackArtists { get; set;}
+        public ICollection<TrackArtistViewModel> Artists { get; set; }
     }
 }
