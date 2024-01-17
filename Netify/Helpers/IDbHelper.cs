@@ -1,5 +1,6 @@
 ﻿using NetifyAPI.Data;
 using NetifyAPI.Models;
+using NetifyAPI.Models.Dtos;
 using NetifyAPI.Models.Viewmodels;
 
 namespace NetifyAPI.Helpers
@@ -7,6 +8,9 @@ namespace NetifyAPI.Helpers
     public interface IDbHelper
     {
         public void AddArtistToPerson(ArtistSearchViewModel artist, int userId);
+        public void SaveUserToDatabase(UserDto user);
+
+        public void AddTrackToPerson(TrackSearchViewModel track, int userId);
     }
    
     public class DbHelper : IDbHelper
@@ -15,6 +19,21 @@ namespace NetifyAPI.Helpers
         public DbHelper(NetifyContext context)
         {
             _context = context;
+        }
+        public void SaveUserToDatabase(UserDto user)
+        {
+            try
+            {
+                _context.Users.Add(new User()
+                {
+                    Username = user.Username
+                });
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to save to the database.", ex);
+            }
         }
 
         // Connects a selected artist to the current user.
@@ -35,6 +54,23 @@ namespace NetifyAPI.Helpers
             user.Artists
                 .Add(artist);
 
+            _context.SaveChanges();
+        }
+
+        public void AddTrackToPerson(TrackSearchViewModel trackViewModel, int userId)
+        {
+            var track = new Track
+            {
+                SpotifySongId = trackViewModel.SpotifyTrackId,
+                Title = trackViewModel.Title,
+            };
+
+            var user = _context.Users
+                .Where (u => u.UserId == userId)
+                .SingleOrDefault();
+
+            user.Tracks
+                .Add(track);
             _context.SaveChanges();
         }
     }

@@ -180,18 +180,27 @@ namespace NetifyAPI.Handlers
         //    return Results.Json(trackList);
         //}
 
-        public static IResult CreateNewUser(NetifyContext context, UserDto user)
+        public IResult CreateNewUser(NetifyContext context, UserDto user)
         {
-            if (!context.Users.Any(u => u.Username.Equals(user.Username)))
+            try
             {
-                DbHelper.SaveUserToDatabase(context, user);
-                return Results.StatusCode((int)HttpStatusCode.Created);
+                if (!context.Users.Any(u => u.Username.Equals(user.Username)))
+                {
+                    DbHelper dbHelper = new DbHelper(context);
+                    dbHelper.SaveUserToDatabase(user);
+                    return Results.StatusCode((int)HttpStatusCode.Created);
+                }
+                else
+                {
+                    return Results.Conflict("That username is already taken.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return Results.Conflict("That username is already taken.");
+                return Results.StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
+
 
     }
 }
