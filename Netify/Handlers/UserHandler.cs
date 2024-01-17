@@ -2,7 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using NetifyAPI.Data;
 using NetifyAPI.Models;
+using NetifyAPI.Models.Dtos;
 using NetifyAPI.Models.Viewmodels;
+using NetifyAPI.Helpers;
+using System.Net;
 
 namespace NetifyAPI.Handlers
 {
@@ -176,5 +179,19 @@ namespace NetifyAPI.Handlers
         //        .ToList();
         //    return Results.Json(trackList);
         //}
+
+        public static IResult CreateNewUser(NetifyContext context, UserDto user)
+        {
+            if (!context.Users.Any(u => u.Username.Equals(user.Username)))
+            {
+                DbHelper.SaveUserToDatabase(context, user);
+                return Results.StatusCode((int)HttpStatusCode.Created);
+            }
+            else
+            {
+                return Results.Conflict("That username is already taken.");
+            }
+        }
+
     }
 }
