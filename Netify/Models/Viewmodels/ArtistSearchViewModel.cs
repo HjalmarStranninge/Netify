@@ -1,4 +1,4 @@
-﻿using NetifyAPI.Models.JoinTables;
+﻿
 using System.Text.Json.Serialization;
 
 namespace NetifyAPI.Models.Viewmodels
