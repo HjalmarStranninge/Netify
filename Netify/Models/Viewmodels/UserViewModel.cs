@@ -1,5 +1,4 @@
-﻿using NetifyAPI.Models.JoinTables;
-
+﻿
 namespace NetifyAPI.Models.Viewmodels
 {
     public class UserViewModel
