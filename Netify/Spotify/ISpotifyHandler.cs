@@ -8,6 +8,7 @@ using System.Net.Http;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using NetifyAPI.Models.Dtos.Tracks;
 using NetifyAPI.Models.Viewmodels;
+using NetifyAPI.Models.Dtos.Artists;
 
 namespace NetifyAPI.Spotify
 {
@@ -15,7 +16,8 @@ namespace NetifyAPI.Spotify
     public interface ISpotifyHandler
     {
         Task <string> GetAccessToken();
-        Task<List<TrackViewModel>> SearchForTracks(string query, int offset);
+        Task<List<TrackSearchViewModel>> SearchForTracks(string query, int offset);
+        Task<List<ArtistSearchViewModel>> SearchForArtists(string query, int offset);
     }
     public class SpotifyHandler : ISpotifyHandler
     {
@@ -77,7 +79,7 @@ namespace NetifyAPI.Spotify
         }
 
         // Search for tracks through the Spotify API.
-        public async Task<List<TrackViewModel>> SearchForTracks(string query,int offset)
+        public async Task<List<TrackSearchViewModel>> SearchForTracks(string query,int offset)
         {
             
             var accessToken = await GetAccessToken();
@@ -92,10 +94,10 @@ namespace NetifyAPI.Spotify
             var trackDtos = searchResponse.Tracks.Items;
 
             // Converts the Dto into a ViewModel before returning.
-            var trackViewModels= new List<TrackViewModel>();
+            var trackViewModels= new List<TrackSearchViewModel>();
             foreach (var trackDto in trackDtos)
             {
-                var trackViewModel = new TrackViewModel
+                var trackViewModel = new TrackSearchViewModel
                 {
                     Title = trackDto.Title,
                     SpotifyTrackId = trackDto.SpotifyTrackId,
@@ -106,6 +108,39 @@ namespace NetifyAPI.Spotify
             }
 
             return trackViewModels;
+        }
+
+        // Exactly the same as the Track search but for artists.
+        public async Task<List<ArtistSearchViewModel>> SearchForArtists(string query, int offset)
+        {
+
+            var accessToken = await GetAccessToken();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/search?q={query}&type=artist&limit=10&offset={offset}");
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+            var searchResponse = JsonSerializer.Deserialize<ArtistSearchResponse>(responseBody);
+
+            var artistDtos = searchResponse.Artists.Items;
+
+            // Converts the Dto into a ViewModel before returning.
+            var artistViewModels = new List<ArtistSearchViewModel>();
+            foreach (var artistDto in artistDtos)
+            {
+                var artistViewModel = new ArtistSearchViewModel
+                {
+                    ArtistName = artistDto.Name,
+                    SpotifyArtistId = artistDto.SpotifyArtistId,
+                    Genres = artistDto.Genres
+        
+                };
+
+                artistViewModels.Add(artistViewModel);
+            }
+
+            return artistViewModels;
         }
     }
 }

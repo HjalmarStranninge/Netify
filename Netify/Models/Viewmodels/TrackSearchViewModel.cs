@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace NetifyAPI.Models.Viewmodels
 {
-    public class TrackViewModel
+    public class TrackSearchViewModel
     {
         [JsonIgnore]
         public string SpotifyTrackId { get; set; }
