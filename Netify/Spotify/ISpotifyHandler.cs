@@ -79,7 +79,7 @@ namespace NetifyAPI.Spotify
         }
 
         // Search for tracks through the Spotify API.
-        public async Task<List<TrackSearchViewModel>> SearchForTracks(string query,int offset)
+        public async Task<List<TrackSearchViewModel>> SearchForTracks(string query, int offset)
         {
             
             var accessToken = await GetAccessToken();

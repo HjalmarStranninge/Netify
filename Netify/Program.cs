@@ -36,20 +36,28 @@ namespace Netify
             app.MapPost("/user/{userId}/artist/{artistId}", () => ""); // Add a specific user to a artist
             app.MapPost("/user/{userId}/tracks/{trackId}", () => ""); // Add a specific user to a tracks
 
-            app.MapGet("/tracksearch", async (ISpotifyHandler handler, string query, int offset) => {
+            app.MapGet("/tracksearch", async (ISpotifyHandler handler, string query, int? offset) => {
                 if (String.IsNullOrEmpty(query))
                 {
                     throw new ArgumentException("no query");
                 }
-                return await handler.SearchForTracks(query, offset);
+                if (offset == null)
+                {
+                    offset = 0;
+                }
+                return await handler.SearchForTracks(query, offset.Value);
             });
 
-            app.MapGet("/artistsearch", async (ISpotifyHandler handler, string query, int offset) => {
+            app.MapGet("/artistsearch", async (ISpotifyHandler handler, string query, int? offset) => {
                 if (String.IsNullOrEmpty(query))
                 {
                     throw new ArgumentException("no query");
                 }
-                return await handler.SearchForArtists(query, offset);
+                if (offset == null)
+                {
+                    offset = 0;
+                }
+                return await handler.SearchForArtists(query, offset.Value);
             });
 
             app.Run();
