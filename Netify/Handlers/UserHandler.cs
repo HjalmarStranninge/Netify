@@ -12,10 +12,10 @@ namespace NetifyAPI.Handlers
         // Get all users
         public static IResult ListUsers(NetifyContext context)
         {
-            UserViewModel[] result = context.Users
+            UserListViewModel[] result = context.Users
                 //.Include?? vad vill vi inkludera i listvy?
                 // skapa separat viewmodel för bara userid och username?
-                .Select(u => new UserViewModel()
+                .Select(u => new UserListViewModel()
                 {
                     UserId = u.UserId,
                     Username = u.Username
