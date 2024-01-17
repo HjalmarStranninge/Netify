@@ -9,8 +9,8 @@ namespace NetifyAPI.Handlers
         // Connect a user to a new track
 
     }
-    public class TrackHandler
-    {
-        private readonly ISpotifyHandler;
-    }
+    //public class TrackHandler
+    //{
+    //    private readonly ISpotifyHandler
+    //}
 }
