@@ -6,6 +6,6 @@
         public string Title { get; set; }
 
         public virtual ICollection<Artist> Artists { get; set; }
-        public virtual ICollection<Track> Tracks { get; set; }
+
     }
 }
