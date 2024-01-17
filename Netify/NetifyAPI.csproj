@@ -20,6 +20,7 @@
     <Folder Include="Migrations\" />
 
     <Folder Include="Models\Dtos\" />
+
     <Folder Include="Data\" />
 
   </ItemGroup>

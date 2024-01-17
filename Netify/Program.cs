@@ -39,6 +39,8 @@ namespace Netify
             // Fetches a new access token from the Spotify API.
             app.MapGet("/accesstoken", async (ISpotifyHandler handler) => await handler.GetAccessToken());
 
+            app.MapGet("/search", async (ISpotifyHandler handler) => await handler.SearchForTracks("test"));
+
             app.Run();
         }
     }

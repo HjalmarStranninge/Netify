@@ -1,8 +1,12 @@
 ﻿using NetifyAPI.Models.Dtos;
+using NetifyAPI.Models;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using System.Net.Http;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using NetifyAPI.Models.Dtos.Tracks;
 
 namespace NetifyAPI.Spotify
 {
@@ -10,6 +14,7 @@ namespace NetifyAPI.Spotify
     public interface ISpotifyHandler
     {
         Task <string> GetAccessToken();
+        Task<List<TrackDto>> SearchForTracks(string query);
     }
     public class SpotifyHandler : ISpotifyHandler
     {
@@ -68,6 +73,22 @@ namespace NetifyAPI.Spotify
 
             return authResult.AccessToken;          
                       
+        }
+
+        // Search for tracks through the Spotify API.
+        public async Task<List<TrackDto>> SearchForTracks(string query)
+        {
+            
+            var accessToken = await GetAccessToken();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/search?q={query}&type=track");
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+            var searchResponse = JsonSerializer.Deserialize<TrackSearchResponse>(responseBody);
+
+            return searchResponse.Tracks.Items;
         }
     }
 }
