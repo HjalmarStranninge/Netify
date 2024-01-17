@@ -15,16 +15,16 @@ namespace NetifyAPI.Handlers
         public static IResult ListUsers(NetifyContext context)
         {
             UserListViewModel[] result = context.Users
-                //.Include?? vad vill vi inkludera i listvy?
-                // skapa separat viewmodel för bara userid och username?
                 .Select(u => new UserListViewModel()
                 {
-                    UserId = u.UserId,
                     Username = u.Username
                 })
                 .ToArray();
 
             return Results.Json(result);
+
+            // TODO
+            // Lägg till felhantering
         }
 
         // Search users.(Main use to get userId)
@@ -42,143 +42,119 @@ namespace NetifyAPI.Handlers
             return Results.Json(searchUser);
         }
 
-        //// View user
-        //public static IResult ViewUser(NetifyContext context, int userId)
-        //{
-        //    // can be extracted to seperate method
-        //    User? user = context.Users
-        //        .Include(u => u.UserGenres)  // Include the UserGenres navigation property
-        //            .ThenInclude(ug => ug.Genre)  // Include the Genre navigation property within UserGenres    
-        //        .Include(u => u.UserArtists)
-        //            .ThenInclude(ua => ua.Artists)
-        //        .Include(u => u.UserTracks)
-        //            .ThenInclude(ut => ut.Tracks)
-        //        .Where(u => u.UserId == userId)
-        //        .SingleOrDefault();
-        //    // kommer detta köras långsamt eller kan man snabba upp if satsen nedan genom att köra den tidigare?
-        //    if (user == null)
-        //    {
-        //        return Results.NotFound();
-        //    }
+        // View user
+        public static IResult ViewUser(NetifyContext context, int userId)
+        {
+            User user = UserFinder(context, userId);
 
-        //    // begränsning på hur mycket som ska visas om vi vill ha det
-        //    // tänker att man vill ha en topp?
-        //    int genreLimit = 3;
-        //    int artistLimit = 3;
-        //    int trackLimit = 3;
+            if (user == null)
+            {
+                return Results.NotFound();
+            }
 
-        //    UserViewModel userView = new UserViewModel()
-        //    {
-        //        UserId = user.UserId,
-        //        Username = user.Username,
-        //        UserGenres = user.UserGenres
-        //            .Select(g => new GenreViewModel()
-        //            {
-        //                //ska id inkluderas för att kunna söka efter dessa?
-        //                // ska vi lägga till "user till Genre" klass?
-        //                //för att sätta relationen flera till flera
-        //                GenreId = g.GenreId,
-        //                Title = g.Genre.Title,
-        //            })
-        //            .Take(genreLimit)
-        //            .ToList(),
-        //        UserArtists = user.UserArtists
-        //            .Select(a => new ArtistViewModel()
-        //            {
-        //                ArtistId = a.ArtistId,
-        //                ArtistName = a.Artists.ArtistName,
-        //            })
-        //            .Take(artistLimit)
-        //            .ToList(),
-        //        UserTracks = user.UserTracks
-        //            .Select(t => new TrackViewModel()
-        //            {
-        //                TrackId = t.TrackId,
-        //                Title = t.Tracks.Title,
-        //                TrackArtists = (ICollection<TrackArtist>)t.Tracks.TrackArtists
-        //                    .Select(a => new ArtistViewModel()
-        //                    {
-        //                        ArtistName = a.Artists.ArtistName,
-        //                    })
-        //                    .ToList(),
-        //            })
-        //            .Take(trackLimit)
-        //            .ToList(),
+            // begränsning på hur mycket som ska visas om vi vill ha det
+            // tänker att man vill ha en topp?
+            int genreLimit = 3;
+            int artistLimit = 3;
+            int trackLimit = 3;
 
-        //    };
-        //    return Results.Json(userView);
+            UserViewModel userView = new UserViewModel()
+            {
+                Username = user.Username,
+                Genres = user.Genres
+                    .Select(g => new GenreViewModel()
+                    {
+                        Title = g.Title
+                    })
+                    .Take(genreLimit)
+                    .ToList(),
+                Artists = user.Artists
+                    .Select(a => new ArtistViewModel()
+                    {
+                        ArtistName = a.ArtistName,
+                    })
+                    .Take(artistLimit)
+                    .ToList(),
+                Tracks = user.Tracks
+                    .Select(t => new TrackViewModel()
+                    {
+                        Title = t.Title,
+                        Artists = t.Artists 
+                    })
+                    .Take(trackLimit)
+                    .ToList(),
 
-        //}
+            };
+            return Results.Json(userView);
+
+        }
+
+
         // Get a specfic user and their liked genres
-        //public static IResult UserLikedGenre(NetifyContext context, int userId)
-        //{
-        //    // can be extracted to seperate method
-        //    User? user = context.Users
-        //        .Include(u => u.UserGenres)
-        //            .ThenInclude(u => u.Genre)
-        //        .Where(u => u.UserId == userId)
-        //        .SingleOrDefault();
-        //    if (user == null)
-        //    {
-        //        return Results.NotFound();
-        //    }
+        public static IResult UserGenres(NetifyContext context, int userId)
+        {
+            User user = UserFinder(context, userId);
 
-        //    List<GenreViewModel> genreList = user.UserGenres
-        //        .Select(g => new GenreViewModel()
-        //        {
-        //            GenreId = g.Genre.GenreId,
-        //            Title = g.Genre.Title,
-        //        })
-        //        .ToList();
-        //    return Results.Json(genreList);
-        //}
+            if (user == null)
+            {
+                return Results.NotFound();
+            }
 
-        //public static IResult UserLikedArtists(NetifyContext context, int userId)
-        //{
-        //    // can be extracted to seperate method
-        //    User? user = context.Users
-        //        .Include(u => u.UserGenres)
-        //            .ThenInclude(u => u.Genre)
-        //        .Where(u => u.UserId == userId)
-        //        .SingleOrDefault();
-        //    if (user == null)
-        //    {
-        //        return Results.NotFound();
-        //    }
+            List<GenreViewModel> genreList = user.Genres
+                .Select(g => new GenreViewModel()
+                {
+                    Title = g.Title,
+                })
+                .ToList();
+            return Results.Json(genreList);
+        }
 
-        //    List<ArtistViewModel> artistList = user.UserArtists
-        //        .Select(a => new ArtistViewModel()
-        //        {
-        //            ArtistId = a.ArtistId,
-        //            ArtistName = a.Artists.ArtistName,
-        //        })
-        //        .ToList();
-        //    return Results.Json(artistList);
-        //}
+        public static IResult UserArtists(NetifyContext context, int userId)
+        {
+            User user = UserFinder(context, userId);
 
-        //public static IResult UserLikedTracks(NetifyContext context, int userId)
-        //{
-        //    // can be extracted to seperate method
-        //    User? user = context.Users
-        //        .Include(u => u.UserGenres)
-        //            .ThenInclude(u => u.Genre)
-        //        .Where(u => u.UserId == userId)
-        //        .SingleOrDefault();
-        //    if (user == null)
-        //    {
-        //        return Results.NotFound();
-        //    }
+            if (user == null)
+            {
+                return Results.NotFound();
+            }
 
-        //    List<TrackViewModel> trackList = user.UserTracks
-        //        .Select(t => new TrackViewModel()
-        //        {
-        //            TrackId = t.TrackId,
-        //            Title = t.Tracks.Title,
-        //            TrackArtists = t.Tracks.TrackArtists
-        //        })
-        //        .ToList();
-        //    return Results.Json(trackList);
-        //}
+            List<ArtistViewModel> artistList = user.Artists
+                .Select(a => new ArtistViewModel()
+                {
+                    ArtistName =a.ArtistName,
+                })
+                .ToList();
+            return Results.Json(artistList);
+        }
+
+        public static IResult UserTracks(NetifyContext context, int userId)
+        {
+            User user = UserFinder(context, userId);
+
+            if (user == null)
+            {
+                return Results.NotFound();
+            }
+
+            List<TrackViewModel> trackList = user.Tracks
+                .Select(a => new TrackViewModel()
+                {
+                    Title =a.Title,
+                    Artists = a.Artists,
+                })
+                .ToList();
+            return Results.Json(trackList);
+        }
+
+        private static User? UserFinder(NetifyContext context, int userId)
+        {
+            return context.Users
+                .Include(u => u.Genres)
+                .Include(u => u.Artists)
+                .Include(u => u.Tracks)
+                .Where(u => u.UserId == userId)
+                .SingleOrDefault();
+        }
 
         public static IResult CreateNewUser(NetifyContext context, UserDto user)
         {
