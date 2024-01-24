@@ -13,25 +13,25 @@ using NetifyAPI.Models.Dtos.Artists;
 namespace NetifyAPI.Spotify
 {
     // Class for handling interaction with the Spotify API. The interface is used for dependency injection.
-    public interface ISpotifyHandler
+    public interface ISpotifyService
     {
         Task <string> GetAccessToken();
         Task<List<TrackSearchViewModel>> SearchForTracks(string query, int offset);
         Task<List<ArtistSearchViewModel>> SearchForArtists(string query, int offset);
     }
-    public class SpotifyHandler : ISpotifyHandler
+    public class SpotifyService : ISpotifyService
     {
         private string? _accessToken;
         private HttpClient _httpClient;
         private string _clientId;
         private string _clientSecret;
         private DateTime _lastUpdatedToken;
-        public SpotifyHandler(string clientId, string clientSecret) : this(new HttpClient(), clientId, clientSecret)
+        public SpotifyService(string clientId, string clientSecret) : this(new HttpClient(), clientId, clientSecret)
         {
 
         }
 
-        public SpotifyHandler(HttpClient httpClient, string clientId, string clientSecret)
+        public SpotifyService(HttpClient httpClient, string clientId, string clientSecret)
         {
             _httpClient = httpClient;
             _clientId = clientId;
