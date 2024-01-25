@@ -7,34 +7,49 @@ namespace NetifyClient
     {
         static async Task Main(string[] args)
         {
-            //using(HttpClient client = new HttpClient())
-            //{
-            //    client.BaseAddress = new Uri("https://localhost:7105");
+            while (true)
+            {
+                Console.CursorVisible = false;
+                Console.Clear();
+                string[] options = { "Select user", "Create new user" };
 
-            //    Console.WriteLine("Before making the request");
-            //    HttpResponseMessage response = await client.GetAsync("/users");
-            //    Console.WriteLine("After making the request");
+                var menuChoice = Utilities.ArrowkeySelectionHorizontal(options);
 
-            //    if (!response.IsSuccessStatusCode)
-            //    {
-            //        throw new Exception($"failed to list users. status code {response.StatusCode}");
-            //    }
+                using (HttpClient client = new HttpClient())
+                {
+                    if(menuChoice == 0)
+                    {
+                        Console.Clear();
+                        client.BaseAddress = new Uri("https://localhost:7105");
 
-            //    var content = await response.Content.ReadAsStringAsync();
-                
-            //    UserList[] users = JsonSerializer.Deserialize<UserList[]>(content);
+                        HttpResponseMessage response = await client.GetAsync("/users");
 
-            //    Console.WriteLine("Entering the loop");
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            throw new Exception($"Failed to list users. Status code {response.StatusCode}");
+                        }
 
-            //    foreach (var user in users)
-            //    {
-            //        Console.WriteLine($"Processing user: {user.UserId} - {user.Username}");
-            //        await Console.Out.WriteLineAsync($"{user.UserId}:\t{user.Username}");
-            //    }
+                        var content = await response.Content.ReadAsStringAsync();
 
-            //    Console.WriteLine("press any key to exit");
-            //    Console.ReadLine();
-            //}
+                        UserList[] users = JsonSerializer.Deserialize<UserList[]>(content);
+
+                        var userNames = new List<string>();
+                        
+                        foreach (var user in users)
+                        {
+                            userNames.Add(user.Username);
+                        }
+
+                        int userIdSelected =  Utilities.ArrowkeySelectionVertical(userNames);
+                    }
+                    else
+                    {
+                        // Create new user.
+                    }
+                    
+                }
+            }
+            
         }
     }
 }

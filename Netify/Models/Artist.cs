@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace NetifyAPI.Models
@@ -14,6 +15,7 @@ namespace NetifyAPI.Models
         public string Bio { get; set; }
 
         public virtual ICollection<Track> Tracks { get; set; }
+        [NotMapped]
         public virtual ICollection<string> Genres { get; set; }
     }
 }
