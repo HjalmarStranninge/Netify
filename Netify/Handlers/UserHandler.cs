@@ -21,6 +21,12 @@ namespace NetifyAPI.Handlers
                 })
                 .ToArray();
 
+            // If no users in database, return not found error message
+            if (result == null)
+            {
+                return Results.NotFound();
+            }
+
             return Results.Json(result);
 
             // TODO
@@ -38,6 +44,12 @@ namespace NetifyAPI.Handlers
                     Username = u.Username,
                 })
                 .ToList();
+
+            // If search for users in database is null, return not found error message
+            if (searchUser == null)
+            {
+                return Results.NotFound();
+            }
 
             return Results.Json(searchUser);
         }
@@ -86,7 +98,6 @@ namespace NetifyAPI.Handlers
 
             };
             return Results.Json(userView);
-
         }
 
 
@@ -106,6 +117,11 @@ namespace NetifyAPI.Handlers
                     Title = g.Title,
                 })
                 .ToList();
+
+            if (genreList == null)
+            {
+                return Results.NotFound();
+            }
             return Results.Json(genreList);
         }
 
@@ -124,6 +140,11 @@ namespace NetifyAPI.Handlers
                     ArtistName =a.ArtistName,
                 })
                 .ToList();
+
+            if (artistList == null)
+            {
+                return Results.NotFound();
+            }
             return Results.Json(artistList);
         }
 
@@ -143,6 +164,11 @@ namespace NetifyAPI.Handlers
                     Artists = a.Artists,
                 })
                 .ToList();
+
+            if (trackList == null)
+            {
+                return Results.NotFound();
+            }
             return Results.Json(trackList);
         }
 
@@ -176,7 +202,5 @@ namespace NetifyAPI.Handlers
                 return Results.StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
-
-
     }
 }
