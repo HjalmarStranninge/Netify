@@ -81,7 +81,6 @@ namespace NetifyAPI.Spotify
         // Search for tracks through the Spotify API.
         public async Task<List<TrackSearchViewModel>> SearchForTracks(string query, int offset)
         {
-            
             var accessToken = await GetAccessToken();
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
@@ -94,14 +93,18 @@ namespace NetifyAPI.Spotify
             var trackDtos = searchResponse.Tracks.Items;
 
             // Converts the Dto into a ViewModel before returning.
-            var trackViewModels= new List<TrackSearchViewModel>();
+            var trackViewModels = new List<TrackSearchViewModel>();
             foreach (var trackDto in trackDtos)
             {
+                // Retrieve danceability for each track
+                var danceability = await SearchForDanceability(trackDto.SpotifyTrackId);
+
                 var trackViewModel = new TrackSearchViewModel
                 {
                     Title = trackDto.Title,
                     SpotifyTrackId = trackDto.SpotifyTrackId,
-                    Artists = trackDto.Artists
+                    Artists = trackDto.Artists,
+                    Danceability = danceability
                 };
 
                 trackViewModels.Add(trackViewModel);
@@ -142,5 +145,20 @@ namespace NetifyAPI.Spotify
 
             return artistViewModels;
         }
+        public async Task<double> SearchForDanceability(string trackId)
+    {
+        var accessToken = await GetAccessToken();
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/audio-features/{trackId}");
+        response.EnsureSuccessStatusCode();
+
+        string responseBody = await response.Content.ReadAsStringAsync();
+        var audioFeatures = JsonSerializer.Deserialize<AudioFeaturesResponse>(responseBody);
+
+        // Extract the danceability value from the response and return it.
+        return audioFeatures.Danceability;
+    }
     }
 }
+
