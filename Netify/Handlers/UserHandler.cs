@@ -6,15 +6,16 @@ using NetifyAPI.Models.Dtos;
 using NetifyAPI.Models.Viewmodels;
 using NetifyAPI.Helpers;
 using System.Net;
+using NetifyAPI.Repositories;
 
 namespace NetifyAPI.Handlers
 {
     public class UserHandler
     {
-        // Get all users
-        public static IResult ListUsers(NetifyContext context)
+        // Get all users. Repository method lists all users, viewmodel displays relevant data.
+        public static IResult ListUsers(IUserRepository repository)
         {
-            UserListViewModel[] result = context.Users
+            UserListViewModel[] result = repository.ListAllUsers()
                 .Select(u => new UserListViewModel()
                 {
                     Username = u.Username
@@ -23,14 +24,12 @@ namespace NetifyAPI.Handlers
 
             return Results.Json(result);
 
-            // TODO
-            // Lägg till felhantering
         }
 
-        // Search users.(Main use to get userId)
-        public static IResult SearchUsers(NetifyContext context, string query)
+        // Search users.(Main function is to get userId). Repository method lists all users, handler filters out through query then displays relevant data through viewmodel
+        public static IResult SearchUsers(IUserRepository repository, string query)
         {
-            var searchUser = context.Users
+            var searchUser = repository.ListAllUsers()
                 .Where(u => u.Username.Contains(query))
                 .Select(u => new UserViewModel()
                 {
@@ -43,17 +42,16 @@ namespace NetifyAPI.Handlers
         }
 
         // View user
-        public static IResult ViewUser(NetifyContext context, int userId)
+        public static IResult ViewUser(IUserRepository repository, int userId)
         {
-            User user = UserFinder(context, userId);
+            User? user = repository.GetUser(userId);
 
             if (user == null)
             {
                 return Results.NotFound();
             }
 
-            // begränsning på hur mycket som ska visas om vi vill ha det
-            // tänker att man vill ha en topp?
+            // begränsning på hur mycket som ska visas (om vi nu vill ha det)
             int genreLimit = 3;
             int artistLimit = 3;
             int trackLimit = 3;
@@ -83,17 +81,15 @@ namespace NetifyAPI.Handlers
                     })
                     .Take(trackLimit)
                     .ToList(),
-
             };
             return Results.Json(userView);
-
         }
 
 
         // Get a specfic user and their liked genres
-        public static IResult UserGenres(NetifyContext context, int userId)
+        public static IResult UserGenres(IUserRepository repository, int userId)
         {
-            User user = UserFinder(context, userId);
+            User? user = repository.GetUser(userId);
 
             if (user == null)
             {
@@ -109,9 +105,9 @@ namespace NetifyAPI.Handlers
             return Results.Json(genreList);
         }
 
-        public static IResult UserArtists(NetifyContext context, int userId)
+        public static IResult UserArtists(IUserRepository repository, int userId)
         {
-            User user = UserFinder(context, userId);
+            User? user = repository.GetUser(userId);
 
             if (user == null)
             {
@@ -127,9 +123,9 @@ namespace NetifyAPI.Handlers
             return Results.Json(artistList);
         }
 
-        public static IResult UserTracks(NetifyContext context, int userId)
+        public static IResult UserTracks(IUserRepository repository, int userId)
         {
-            User user = UserFinder(context, userId);
+            User? user = repository.GetUser(userId);
 
             if (user == null)
             {
@@ -146,15 +142,6 @@ namespace NetifyAPI.Handlers
             return Results.Json(trackList);
         }
 
-        private static User? UserFinder(NetifyContext context, int userId)
-        {
-            return context.Users
-                .Include(u => u.Genres)
-                .Include(u => u.Artists)
-                .Include(u => u.Tracks)
-                .Where(u => u.UserId == userId)
-                .SingleOrDefault();
-        }
 
         public IResult CreateNewUser(NetifyContext context, UserDto user)
         {
