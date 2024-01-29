@@ -8,33 +8,10 @@ namespace NetifyAPI.Repositories
 {
     public interface IUserRepository
     {
-        // User
-
         User? GetUser(int userId);
         List<User> ListAllUsers();
 
-        //List<User> SearchUser(string query);
-        // get user borde funka här?
         void SaveUserToDatabase(UserDto userDto);
-
-        //public void SaveUserToDatabase(UserDto user);
-
-        ////void Save();
-
-        //// Genre
-        ////Genre? GetGenre(string Title)
-        //List<string> ListAllGenresOfUser();
-        //void AddGenreToUser(Genre genre);
-        ////Genre GetOrCreateGenreToUser(string title);
-
-        //// Artist
-        //List<Artist> ListAllArtistsOfUser();
-        //void AddArtistToUser(Artist artist);
-        ////Artist GetOrCreateArtistToUser(string artistName);
-        //// Tracks
-        //List<Track> ListAllTracksOfUser();
-        //void AddTrackToUser(Track track);
-        ////Track GetOrCreateTrackToUser(string trackName);
 
     }
 
@@ -46,11 +23,14 @@ namespace NetifyAPI.Repositories
         {
             _context = context;
         }
+
+        // Lists all users in database.
         public List<User> ListAllUsers()
         {
             return _context.Users.ToList();
         }
 
+        // Gets user from db, including connected genres, artists and tracks for wider functionality.
         public User? GetUser(int userId)
         {
             User? user = _context.Users.
@@ -62,7 +42,7 @@ namespace NetifyAPI.Repositories
             return user;
         }
         
-        // Duplicate method in IDbHelper (saveusertodatabase)
+        // Saves user to database
         public void SaveUserToDatabase(UserDto userDto)
         {
             try
@@ -79,45 +59,5 @@ namespace NetifyAPI.Repositories
             }
         }
 
-        //public void SaveUserToDatabase(UserDto user)
-        //{
-        //    try
-        //    {
-        //        _context.Users.Add(new User()
-        //        {
-        //            Username = user.Username
-        //        });
-        //        _context.SaveChanges();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("Unable to save to the database.", ex);
-        //    }
-        //}
-        //public List<string> ListAllGenresOfUser()
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public void AddGenreToUser(Genre genre)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public List<Artist> ListAllArtistsOfUser()
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public void AddArtistToUser(Artist artist)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public List<Track> ListAllTracksOfUser()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-            //public void AddTrackToUser(Track track)
-            //{
-            //    throw new NotImplementedException();
-            //}
     }
 }

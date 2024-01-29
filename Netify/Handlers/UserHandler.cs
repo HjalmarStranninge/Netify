@@ -44,7 +44,6 @@ namespace NetifyAPI.Handlers
                 })
                 .ToList();
 
-            // If search for users in database is null, return not found error message
             if (searchUser == null)
             {
                 return Results.NotFound();
@@ -53,7 +52,7 @@ namespace NetifyAPI.Handlers
             return Results.Json(searchUser);
         }
 
-        // View user
+        // View user. Viewmodels for displaying connected genre, artists and tracks
         public static IResult ViewUser(IUserRepository repository, int userId)
         {
             User? user = repository.GetUser(userId);
@@ -122,6 +121,7 @@ namespace NetifyAPI.Handlers
             return Results.Json(genreList);
         }
 
+        // Get a specfic user and their liked artists
         public static IResult UserArtists(IUserRepository repository, int userId)
         {
             User? user = repository.GetUser(userId);
@@ -145,6 +145,7 @@ namespace NetifyAPI.Handlers
             return Results.Json(artistList);
         }
 
+        // Get a specfic user and their liked tracks
         public static IResult UserTracks(IUserRepository repository, int userId)
         {
             User? user = repository.GetUser(userId);
@@ -169,7 +170,7 @@ namespace NetifyAPI.Handlers
             return Results.Json(trackList);
         }
 
-
+        // Creates new user if username is available
         public IResult CreateNewUser(IUserRepository repository, UserDto userDto)
         {
             try
