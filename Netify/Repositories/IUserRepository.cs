@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore;
 using NetifyAPI.Data;
 using NetifyAPI.Models;
 using NetifyAPI.Models.Dtos;
@@ -11,9 +12,12 @@ namespace NetifyAPI.Repositories
 
         User? GetUser(int userId);
         List<User> ListAllUsers();
+
         //List<User> SearchUser(string query);
         // get user borde funka här?
-        void CreateUser(UserDto userDto);
+        void SaveUserToDatabase(UserDto userDto);
+
+        //public void SaveUserToDatabase(UserDto user);
 
         ////void Save();
 
@@ -49,20 +53,47 @@ namespace NetifyAPI.Repositories
 
         public User? GetUser(int userId)
         {
-            User? user = _context.Users.Where(u => u.UserId == userId).SingleOrDefault();
+            User? user = _context.Users.
+                Where(u => u.UserId == userId)
+                .Include(u => u.Genres)
+                .Include(u => u.Artists)
+                .Include(u => u.Tracks)
+                .SingleOrDefault();
             return user;
         }
         
         // Duplicate method in IDbHelper (saveusertodatabase)
-        public void CreateUser(UserDto userDto)
+        public void SaveUserToDatabase(UserDto userDto)
         {
-            var user = new User
+            try
             {
-                Username = userDto.Username,
-            };
-            _context.Users.Add(user);
-            _context.SaveChanges();
+                _context.Users.Add(new User()
+                {
+                    Username = userDto.Username
+                });
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to save to the database.", ex);
+            }
         }
+
+        //public void SaveUserToDatabase(UserDto user)
+        //{
+        //    try
+        //    {
+        //        _context.Users.Add(new User()
+        //        {
+        //            Username = user.Username
+        //        });
+        //        _context.SaveChanges();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Unable to save to the database.", ex);
+        //    }
+        //}
         //public List<string> ListAllGenresOfUser()
         //{
         //    throw new NotImplementedException();
@@ -84,9 +115,9 @@ namespace NetifyAPI.Repositories
         //    throw new NotImplementedException();
         //}
 
-        //public void AddTrackToUser(Track track)
-        //{
-        //    throw new NotImplementedException();
-        //}
+            //public void AddTrackToUser(Track track)
+            //{
+            //    throw new NotImplementedException();
+            //}
     }
 }
