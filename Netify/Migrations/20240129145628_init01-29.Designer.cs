@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetifyAPI.Data;
 
@@ -11,9 +12,10 @@ using NetifyAPI.Data;
 namespace NetifyAPI.Migrations
 {
     [DbContext(typeof(NetifyContext))]
-    partial class NetifyContextModelSnapshot : ModelSnapshot
+    [Migration("20240129145628_init01-29")]
+    partial class init0129
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

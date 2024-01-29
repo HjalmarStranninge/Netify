@@ -170,14 +170,13 @@ namespace NetifyAPI.Handlers
         }
 
 
-        public IResult CreateNewUser(NetifyContext context, UserDto user)
+        public IResult CreateNewUser(IUserRepository repository, UserDto userDto)
         {
             try
             {
-                if (!context.Users.Any(u => u.Username.Equals(user.Username)))
+                if (!repository.ListAllUsers().Any(u => u.Username.Equals(userDto.Username)))
                 {
-                    DbHelper dbHelper = new DbHelper(context);
-                    dbHelper.SaveUserToDatabase(user);
+                    repository.SaveUserToDatabase(userDto);
                     return Results.StatusCode((int)HttpStatusCode.Created);
                 }
                 else
