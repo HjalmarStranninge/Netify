@@ -81,8 +81,15 @@ namespace NetifyAPI.Spotify
         // Search for tracks through the Spotify API.
         public async Task<List<TrackSearchViewModel>> SearchForTracks(string query, int offset)
         {
-            
-            var accessToken = await GetAccessToken();
+            string accessToken = "";
+            try
+            {
+                accessToken = await GetAccessToken();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Unable to fetch access token. Exception: {ex}");
+            }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/search?q={query}&type=track&limit=10&offset={offset}");

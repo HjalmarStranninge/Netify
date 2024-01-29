@@ -20,7 +20,7 @@ namespace NetifyClient
                     if(menuChoice == 0)
                     {
                         Console.Clear();
-                        client.BaseAddress = new Uri("https://localhost:7105");
+                        client.BaseAddress = new Uri("https://localhost:7105/");
 
                         HttpResponseMessage response = await client.GetAsync("/users");
 
@@ -41,6 +41,8 @@ namespace NetifyClient
                         }
 
                         int userIdSelected =  Utilities.ArrowkeySelectionVertical(userNames);
+
+                        await UserFunctions.UserMenu(userIdSelected, client);
                     }
                     else
                     {

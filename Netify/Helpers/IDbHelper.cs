@@ -1,6 +1,7 @@
 ﻿using NetifyAPI.Data;
 using NetifyAPI.Models;
 using NetifyAPI.Models.Dtos;
+using NetifyAPI.Models.Dtos.Tracks;
 using NetifyAPI.Models.Viewmodels;
 
 namespace NetifyAPI.Helpers
@@ -10,7 +11,7 @@ namespace NetifyAPI.Helpers
         public void AddArtistToPerson(ArtistSearchViewModel artist, int userId);
         public void SaveUserToDatabase(UserDto user);
 
-        public void AddTrackToPerson(TrackSearchViewModel track, int userId);
+        public void SaveTrack(TrackDto track, int userId);
     }
    
     public class DbHelper : IDbHelper
@@ -57,12 +58,12 @@ namespace NetifyAPI.Helpers
             _context.SaveChanges();
         }
 
-        public void AddTrackToPerson(TrackSearchViewModel trackViewModel, int userId)
+        public void SaveTrack(TrackDto trackDto, int userId)
         {
             var track = new Track
             {
-                SpotifySongId = trackViewModel.SpotifyTrackId,
-                Title = trackViewModel.Title,
+                SpotifySongId = trackDto.SpotifyTrackId,
+                Title = trackDto.Title,
             };
 
             var user = _context.Users
