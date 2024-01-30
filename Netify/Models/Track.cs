@@ -19,5 +19,8 @@ namespace NetifyAPI.Models
 
        
         public virtual ICollection<User> Users { get; set; }
+
+        [JsonPropertyName("danceability")]
+        public double Danceability { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace NetifyAPI.Models
@@ -7,5 +8,6 @@ namespace NetifyAPI.Models
         [Key]
         public int GenreId { get; set; }
         public string Name { get; set; }
+
     }
 }

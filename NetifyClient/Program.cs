@@ -1,5 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Json;
+using System.Text.Json;
 using NetifyClient.ApiModels;
+using NetifyClient.ApiModels.Dtos;
 
 namespace NetifyClient
 {
@@ -51,7 +53,21 @@ namespace NetifyClient
                     }
                     else
                     {
-                        // Create new user.
+                        Console.Clear();
+                        client.BaseAddress = new Uri("https://localhost:7105/");
+                        UserDto newUser = UserUtilites.CreateUser();
+                        HttpResponseMessage response = await client.PostAsJsonAsync("/users", newUser);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // User created successfully
+                            UserUtilites.CreateUserSuccess();
+                        }
+                        else
+                        {
+                            // Error creating user
+                            string errorMessage = await response.Content.ReadAsStringAsync();
+                            UserUtilites.CreateUserError(errorMessage);
+                        }
                     }
                     
                 }

@@ -12,5 +12,8 @@ namespace NetifyClient.ApiModels.ViewModels
         public string Title { get; set; }
         [JsonPropertyName("artists")]
         public ICollection<TrackArtistViewModel> Artists { get; set; }
+
+        [JsonPropertyName("danceability")]
+        public double Danceability { get; set; }
     }
 }

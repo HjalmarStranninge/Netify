@@ -10,5 +10,6 @@ namespace NetifyAPI.Models
         public virtual ICollection<Artist>? Artists { get; set; }
         public virtual ICollection<Track>? Tracks { get; set; }
         public virtual ICollection<Genre> Genres { get; set; }
+
     }
 }

@@ -23,5 +23,6 @@ namespace NetifyClient.ApiModels.Dtos
 
         [JsonPropertyName("userid")]
         public int UserId { get; set; }
+
     }
 }
