@@ -47,7 +47,7 @@ namespace Netify
             app.MapPost("/users", UserHandler.CreateNewUser); // Create new user to db
 
             app.MapPost("/user/{userId}/genre/{genreId}", () => ""); // Add a specific user to a genre
-            app.MapPost("/user/{userId}/artist/{artistId}", TrackHandler.SaveTrack); // Add a specific user to a artist
+            app.MapPost("/user/saveartist", ArtistHandler.SaveArtist); // Add a specific user to a artist
             app.MapPost("/user/savetrack", TrackHandler.SaveTrack); // Add a specific user to a tracks
 
 

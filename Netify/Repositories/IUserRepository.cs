@@ -14,9 +14,8 @@ namespace NetifyAPI.Repositories
         User? GetUser(int userId);
         List<User> ListAllUsers();
 
-        public void AddArtistToPerson(ArtistSearchViewModel artist, int userId);
-
         public void SaveTrack(string spotifyTrackId, string trackTitle, int userId, List<Artist> artists);
+        public void SaveArtist(string spotifyArtistId, string artistName, int userId, int popularity, List<string> genres);
 
         void SaveUserToDatabase(UserDto userDto);
 
@@ -47,7 +46,7 @@ namespace NetifyAPI.Repositories
                 .SingleOrDefault();
             return user;
         }
-        
+
         public void SaveUserToDatabase(UserDto userDto)
         {
             try
@@ -62,29 +61,6 @@ namespace NetifyAPI.Repositories
             {
                 throw new Exception("Unable to save to the database.", ex);
             }
-        }
-
-        // Connects a selected artist to the current user.
-        public void AddArtistToPerson(ArtistSearchViewModel artistViewModel, int userId)
-        {
-            var artist = new Artist
-            {
-                SpotifyArtistId = artistViewModel.SpotifyArtistId,
-                ArtistName = artistViewModel.ArtistName,
-
-                //Genres = (ICollection<Genre>)artistViewModel.Genres,
-
-            };
-
-            var user =
-                _context.Users
-            .Where(u => u.UserId == userId)
-            .SingleOrDefault();
-
-            user.Artists
-                .Add(artist);
-
-            _context.SaveChanges();
         }
 
         // Saves a selected track to the database and connects to an user. Also saves the artists if they aren't already saved.
@@ -162,6 +138,70 @@ namespace NetifyAPI.Repositories
             }
         }
 
-        
+        // Saves a selected track to the database and connects to an user. Also saves the artists if they aren't already saved.
+        public void SaveArtist(string spotifyArtistId, string artistName, int userId, int popularity, List<string> genres)
+        {
+
+            Artist newArtist = _context.Artists.FirstOrDefault(a => a.SpotifyArtistId == spotifyArtistId);
+            Genre genre = new Genre();
+            genre.Name = genres.FirstOrDefault();
+
+            if (newArtist == null)
+            {
+                try
+                {
+                    newArtist = new Artist
+                    {
+                        SpotifyArtistId = spotifyArtistId,
+                        ArtistName = artistName,
+                        Popularity = popularity,
+                        MainGenre = genre
+                    };
+
+                    _context.Artists.Add(newArtist);
+                    _context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Couldn't save artist to database. Exception: {ex}");
+                }
+            }
+
+            // Selects the current user and connects the selected tracks in the database, given that the artist isn't already connected.
+            var user = _context.Users
+                .Where(u => u.UserId == userId)
+                .Include(u => u.Artists)
+                .Include(u => u.Genres)
+                .SingleOrDefault();
+
+            // Adds the main genre of the artists to the users favorites.
+            if (user != null)
+            {
+                try
+                {
+                    user.Genres.Add(genre);
+                    _context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unable to save genre. Exception: {ex}");
+                }
+            }
+
+            if (user != null && !user.Artists.Contains(newArtist))
+            {
+                try
+                {
+                    user.Artists?.Add(newArtist);
+                    _context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unable to add artist. Exception: {ex}");
+                }
+            }
+        }
+
+
     }
 }

@@ -15,11 +15,11 @@ namespace NetifyClient
         {
             var menuOptions = new List<string>()
             {
-                "Your favorite artists",
-                "Your favorite tracks",
-                "Your favorite genres",
                 "Search artists",
                 "Search tracks",
+                "Your favorite artists",
+                "Your favorite tracks",
+                "Your favorite genres",               
                 "Log out"
             };
 
@@ -28,23 +28,25 @@ namespace NetifyClient
             switch (selectedOption)
             {
                 case 0:
-                    // Show favorite artists.
+                    await SearchArtist(userId, client);
+                    
                     return true; 
 
                 case 1:
-                    // Show favorite tracks.
+                    await SearchTracks(userId, client);
+                    
                     return true; 
 
                 case 2:
-                    // Show favorite genres.
+                    // Show favorite artists.
                     return true;
 
                 case 3:
-                    await SearchArtist(userId, client);
+                    // Show favorite tracks.
                     return true;
 
                 case 4:
-                    await SearchTracks(userId, client);
+                    // Show favorite genres.
                     return true;
                     
                 case 5:
@@ -54,7 +56,7 @@ namespace NetifyClient
                     return true;
 
             }
-        }
+        } 
 
         // Allows the user to search for a track and add it to their favorites, saving it to the database.
         public async static Task SearchTracks(int userId, HttpClient client)
@@ -107,8 +109,8 @@ namespace NetifyClient
                         if (saveResponse.IsSuccessStatusCode)
                         {
                             Utilities.HeaderFooter();
-                            await Console.Out.WriteLineAsync($"Added {trackSelected.Title}\n" +
-                                $" by {trackSelected.Artists.First().Name} to your favorites.");
+                            await Console.Out.WriteLineAsync($"Added {trackSelected.Title} by\n" +
+                                $"{trackSelected.Artists.First().Name} to your favorites!");
                             Thread.Sleep(2000);
                         }
                         else
@@ -151,14 +153,16 @@ namespace NetifyClient
 
                     
 
-                    var artistSelected = await Utilities.ArtistSelection(artists, client, trackQuery);
-
-                    // Dtos of the track and its artists are created.
-                    
+                    var artistSelected = await Utilities.ArtistSelection(artists, client, trackQuery);            
                    
                     var artistDto = new ArtistDto
                     {
-                        Name = artistSelected.ArtistName
+                        Name = artistSelected.ArtistName,
+                        Genres = artistSelected.Genres,
+                        Popularity = artistSelected.Popularity,
+                        SpotifyArtistId = artistSelected.SpotifyArtistId,
+                        UserId = userId
+                        
                     };
 
                     // Connects the track to the user if that option is selected.
@@ -166,12 +170,12 @@ namespace NetifyClient
                     {
                         var jsonPostRequest = JsonSerializer.Serialize(artistDto);
                         var postContent = new StringContent(jsonPostRequest, Encoding.UTF8, "application/json");
-                        HttpResponseMessage saveResponse = await client.PostAsync("/user/savetrack", postContent);
+                        HttpResponseMessage saveResponse = await client.PostAsync("/user/saveartist", postContent);
                         if (saveResponse.IsSuccessStatusCode)
                         {
                             Utilities.HeaderFooter();
-                            await Console.Out.WriteLineAsync($"Added {artistSelected.ArtistName}\n" +
-                                $" to your list of favorite artists!");
+                            await Console.Out.WriteLineAsync($"\n{artistSelected.ArtistName} was added to your list\n" +
+                                $"of favorite artists!");
                             Thread.Sleep(2000);
                         }
                         else

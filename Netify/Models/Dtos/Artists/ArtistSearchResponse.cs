@@ -7,5 +7,7 @@ namespace NetifyAPI.Models.Dtos.Artists
     {
         [JsonPropertyName("artists")]
         public ArtistContainer Artists { get; set; }
+
+        
     }
 }

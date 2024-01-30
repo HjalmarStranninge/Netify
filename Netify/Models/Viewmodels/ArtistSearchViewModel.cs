@@ -11,5 +11,8 @@ namespace NetifyAPI.Models.Viewmodels
         public string ArtistName { get; set; }
         [JsonPropertyName("popularity")]
         public int Popularity { get; set; }
+
+        [JsonPropertyName ("genres")]
+        public ICollection<string> Genres { get; set; }
     }
 }
