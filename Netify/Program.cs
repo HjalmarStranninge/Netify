@@ -52,7 +52,7 @@ namespace Netify
 
 
             // SPOTIFY
-            app.MapGet("/spotifytracksearch/{query}", TrackHandler.SearchTracks);
+            app.MapGet("/spotifytracksearch/{query}/{offset}", TrackHandler.SearchTracks);
 
             app.MapGet("/spotifyartistsearch", async (ISpotifyService spotifyService, string query, int? offset) => {
 

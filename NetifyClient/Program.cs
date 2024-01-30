@@ -10,7 +10,7 @@ namespace NetifyClient
             while (true)
             {
                 Console.CursorVisible = false;
-                Console.Clear();
+                Utilities.HeaderFooter();
                 string[] options = { "Select user", "Create new user" };
 
                 var menuChoice = Utilities.ArrowkeySelectionHorizontal(options);

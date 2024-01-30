@@ -92,7 +92,7 @@ namespace NetifyAPI.Spotify
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/search?q={query}&type=track&limit=10&offset={offset}");
+            var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/search?q={query}&type=track&limit=6&offset={offset}");
             response.EnsureSuccessStatusCode();
 
             string responseBody = await response.Content.ReadAsStringAsync();
@@ -128,7 +128,7 @@ namespace NetifyAPI.Spotify
             var accessToken = await GetAccessToken();
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/search?q={query}&type=artist&limit=10&offset={offset}");
+            var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/search?q={query}&type=artist&limit=6&offset={offset}");
             response.EnsureSuccessStatusCode();
 
             string responseBody = await response.Content.ReadAsStringAsync();
