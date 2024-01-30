@@ -32,7 +32,7 @@ namespace NetifyClient
                     return true; 
 
                 case 1:
-                    // Show favorite tracks.
+                    await ListTracks(userId, client); // Show favorite tracks.
                     return true; 
 
                 case 2:
@@ -53,6 +53,40 @@ namespace NetifyClient
                 default:
                     return true;
 
+            }
+        }
+
+        public async static Task ListTracks(int userId, HttpClient client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"/user/{userId}/tracks");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var tracks = JsonSerializer.Deserialize<List<TrackViewModel>>(content);
+
+                    Utilities.HeaderFooter();
+                    Console.WriteLine("Your favorite tracks:");
+
+                    foreach (var track in tracks)
+                    {
+                        Console.WriteLine($"{track.Title} by {string.Join(", ", track.Artists.Select(a => a.ArtistName))}");
+                    }
+
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+
+                }
+                {
+                    Console.WriteLine($"Failed to list tracks. Status code: {response.StatusCode}");
+                    Console.ReadLine();
+                }
+                
+            } catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during HTTP request: {ex.Message}");
+                Console.ReadLine();
             }
         }
 
