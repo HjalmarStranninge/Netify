@@ -17,8 +17,7 @@ namespace NetifyAPI.Models
 
         public virtual ICollection<User> Users { get; set; }
 
-
-        //public virtual ICollection<Genre> Genres { get; set; }
+        public virtual ICollection<Genre> Genres { get; set; }
 
     }
 }
