@@ -1,4 +1,4 @@
-﻿using NetifyAPI.Models;
+﻿
 using NetifyAPI.Models.Dtos.Tracks;
 using NetifyClient.ApiModels.ViewModels;
 using System;
@@ -92,6 +92,78 @@ namespace NetifyClient
             {
                 HeaderFooter();
                 DisplayTrackInfo(track);
+
+                for (int i = 0; i < menuOptions.Length; i += 2)
+                {
+
+                    // Highlights the currently selected option.
+                    if (i == selectedOption)
+                    {
+                        Console.Write("\n  ");
+                        Console.BackgroundColor = ConsoleColor.Gray;
+                        Console.ForegroundColor = ConsoleColor.Black;
+
+                        Console.Write($"{menuOptions[i]}");
+                        Console.ResetColor();
+                        Console.Write($"".PadRight(4));
+                    }
+                    else
+                    {
+                        Console.Write("\n  ");
+                        Console.Write($"{menuOptions[i]}    ".PadRight(4));
+                    }
+
+                    if (i + 1 < menuOptions.Length)
+                    {
+                        Console.Write(" ");
+
+                        if (i + 1 == selectedOption)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Gray;
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.Write($"{menuOptions[i + 1]}");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.Write($"{menuOptions[i + 1]}");
+                        }
+                    }
+                    Console.WriteLine();
+                }
+
+                key = Console.ReadKey();
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.LeftArrow:
+                        if (selectedOption % 2 == 1 && selectedOption > 0)
+                        {
+                            selectedOption = (selectedOption - 1) % menuOptions.Length;
+                        }
+                        break;
+
+                    case ConsoleKey.RightArrow:
+                        if (selectedOption % 2 == 0 && selectedOption + 1 < menuOptions.Length)
+                        {
+                            selectedOption = (selectedOption + 1) % menuOptions.Length;
+                        }
+                        break;
+                }
+            } while (key.Key != ConsoleKey.Enter);
+
+            return selectedOption;
+        }
+
+        // Another overload that takes an artist viewmodel instead. 
+        public static int ArrowkeySelectionHorizontal(string[] menuOptions, ArtistSearchViewModel artist)
+        {
+            int selectedOption = 0;
+            ConsoleKeyInfo key;
+            do
+            {
+                HeaderFooter();
+                DisplayArtistInfo(artist);
 
                 for (int i = 0; i < menuOptions.Length; i += 2)
                 {
@@ -273,7 +345,6 @@ namespace NetifyClient
 
                 key = Console.ReadKey();
 
-
                 switch (key.Key)
                 {
                     case ConsoleKey.UpArrow:
@@ -332,11 +403,11 @@ namespace NetifyClient
             return menuOptions[selectedOption];
         }
 
+        // Prompts the user to save their selected track or to go back.
         public static int SaveTrack(TrackSearchViewModel selectedTrack)
         {
             HeaderFooter();
             
-
             string[] options = { "Add to favorites", "Exit" };
 
             var selectedOption = ArrowkeySelectionHorizontal(options, selectedTrack);
@@ -390,6 +461,7 @@ namespace NetifyClient
             return query;
         }
 
+        // Clears the console and prints the header and footer.
         public static void HeaderFooter()
         {
             string header = "__  __  ____ ______ __  ____ _  _\r\n||\\ || ||    | || | || ||    \\\\//\r\n||\\\\|| ||==    ||   || ||==   )/ \r\n|| \\|| ||___   ||   || ||    //  ";
@@ -409,6 +481,7 @@ namespace NetifyClient
             Console.WriteLine(footer);
         }
 
+        // Displays the full info for a track.
         public static void DisplayTrackInfo(TrackSearchViewModel track)
         {
             Console.Write($"{track.Title}\n");
@@ -418,6 +491,129 @@ namespace NetifyClient
                 Console.Write($"{artist.Name} ");
             }
             Console.WriteLine();
+        }
+
+        // Displays the full info for an artist.
+        public static void DisplayArtistInfo(ArtistSearchViewModel artist)
+        {
+            Console.Write($"{artist.ArtistName}\n");
+            Console.Write("Popularity: "); // Add popularity here.
+            
+            Console.WriteLine();
+        }
+
+        public async static Task<ArtistSearchViewModel> ArtistSelection(List<ArtistSearchViewModel> menuOptions, HttpClient client, string query)
+        {
+
+            // Variables used for pagination.
+
+            int selectedOption = 0;
+            int currentPage = 0;
+            int offset = 0;
+            int startIndex = 0;
+            int endIndex = 6;
+            ConsoleKeyInfo key;
+            do
+            {
+                HeaderFooter();
+
+                for (int i = startIndex; i < endIndex; i++)
+                {
+
+                    // Highlights the currently selected option.
+                    if (i == selectedOption)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Gray;
+                        Console.ForegroundColor = ConsoleColor.Black;
+
+                        Console.WriteLine($"{menuOptions[i].ArtistName}");
+                        await Console.Out.WriteLineAsync();
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{menuOptions[i].ArtistName}");
+                        await Console.Out.WriteLineAsync();
+                    }
+                }
+
+                key = Console.ReadKey();
+
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        if (selectedOption > 0)
+                        {
+                            selectedOption = (selectedOption - 1);
+                        }
+                        break;
+
+                    case ConsoleKey.DownArrow:
+                        if (selectedOption < endIndex - 1)
+                        {
+                            selectedOption = (selectedOption + 1);
+                        }
+                        break;
+
+                    // Pressing right/left jumps between pages.
+
+                    case ConsoleKey.LeftArrow:
+
+                        // If you're not on the first page of results, a new call to the api is done and the offset is adjusted to return the previous 6 entries.
+                        if (currentPage > 0)
+                        {
+                            offset = offset - 6;
+                            HttpResponseMessage response = await client.GetAsync($"/spotifyartistsearch/{query}/{offset}");
+                            if (response.IsSuccessStatusCode)
+                            {
+                                // Unpacks the response from the API.
+
+                                var content = await response.Content.ReadAsStringAsync();
+                                menuOptions = JsonSerializer.Deserialize<List<ArtistSearchViewModel>>(content);
+                            }
+                            selectedOption = startIndex;
+                        }
+                        break;
+
+                    case ConsoleKey.RightArrow:
+                        {
+                            // Ups the offset by 6 and makes a new call to the api to return the next 6 search results.
+                            currentPage++;
+                            offset = offset + 6;
+                            HttpResponseMessage response = await client.GetAsync($"/spotifyartistsearch/{query}/{offset}");
+                            if (response.IsSuccessStatusCode)
+                            {
+                                // Unpacks the response from the API.
+
+                                var content = await response.Content.ReadAsStringAsync();
+                                menuOptions = JsonSerializer.Deserialize<List<ArtistSearchViewModel>>(content);
+                            }
+                            selectedOption = startIndex;
+                        }
+                        break;
+                }
+            } while (key.Key != ConsoleKey.Enter);
+
+            return menuOptions[selectedOption];
+        }
+
+        // Prompts the user to save their selected track or to go back.
+        public static int SaveArtist(ArtistSearchViewModel selectedArtist)
+        {
+            HeaderFooter();
+
+            string[] options = { "Add to favorites", "Exit" };
+
+            var selectedOption = ArrowkeySelectionHorizontal(options, selectedArtist);
+            if (selectedOption == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
         }
     }
 
