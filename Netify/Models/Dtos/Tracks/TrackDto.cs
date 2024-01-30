@@ -14,6 +14,9 @@ namespace NetifyAPI.Models.Dtos.Tracks
         [JsonPropertyName("artists")]
         public ICollection<Artist> Artists { get; set; }
 
+        [JsonPropertyName("danceability")]
+        public double Danceability { get; set; }
+
         [JsonPropertyName("userid")]
         public int UserId { get; set; }
     }

@@ -89,6 +89,7 @@ namespace NetifyAPI.Spotify
             {
                 await Console.Out.WriteLineAsync($"Unable to fetch access token. Exception: {ex}");
             }
+
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/search?q={query}&type=track&limit=10&offset={offset}");
@@ -103,11 +104,15 @@ namespace NetifyAPI.Spotify
             var trackViewModels = new List<TrackSearchViewModel>();
             foreach (var trackDto in trackDtos)
             {
+                // Retrieve danceability for each track
+                var danceability = await GetDanceability(trackDto.SpotifyTrackId);
+
                 var trackViewModel = new TrackSearchViewModel
                 {
                     Title = trackDto.Title,
                     SpotifyTrackId = trackDto.SpotifyTrackId,
-                    Artists = trackDto.Artists
+                    Artists = trackDto.Artists,
+                    Danceability = Math.Round(danceability * 100, 1)
                 };
 
                 trackViewModels.Add(trackViewModel);
@@ -146,6 +151,29 @@ namespace NetifyAPI.Spotify
                 artistViewModels.Add(artistViewModel);
             }
             return artistViewModels;
+        }
+        public async Task<double> GetDanceability(string trackId)
+        {
+            string accessToken = "";
+            try
+            {
+                accessToken = await GetAccessToken();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Unable to fetch access token. Exception: {ex}");
+            }
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/audio-features/{trackId}");
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+            var audioFeatures = JsonSerializer.Deserialize<AudioFeaturesResponse>(responseBody);
+
+            // Extract the danceability value from the response and return it.
+            return audioFeatures.Danceability;
         }
     }
 }
