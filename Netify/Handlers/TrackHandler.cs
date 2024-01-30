@@ -1,7 +1,7 @@
 ﻿using NetifyAPI.Data;
-using NetifyAPI.Helpers;
 using NetifyAPI.Models;
 using NetifyAPI.Models.Dtos.Tracks;
+using NetifyAPI.Repositories;
 using NetifyAPI.Spotify;
 using System.Net;
 
@@ -25,8 +25,8 @@ namespace NetifyAPI.Handlers
             return Results.Json(tracks);
         }
 
-        // Unpacks the track dto and calls the DbHelper to save the track to the database.
-        public static async Task<IResult> SaveTrack(TrackDto track, IDbHelper helper)
+        // Unpacks the track dto and calls the repository method to save the track to the database.
+        public static async Task<IResult> SaveTrack(TrackDto track, IUserRepository repository)
         {
             string spotifyTrackId = track.SpotifyTrackId;
             string trackTitle = track.Title;
@@ -35,7 +35,7 @@ namespace NetifyAPI.Handlers
 
             try
             {
-                helper.SaveTrack(spotifyTrackId, trackTitle, userId, artists);
+                repository.SaveTrack(spotifyTrackId, trackTitle, userId, artists);
                 return Results.StatusCode((int)HttpStatusCode.Created);
             }
             catch (Exception ex)

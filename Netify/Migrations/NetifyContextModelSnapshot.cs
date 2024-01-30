@@ -21,12 +21,10 @@ namespace NetifyAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-
             modelBuilder.Entity("ArtistTrack", b =>
                 {
                     b.Property<int>("ArtistsArtistId")
                         .HasColumnType("int");
-
 
                     b.Property<int>("TracksTrackId")
                         .HasColumnType("int");
@@ -37,7 +35,6 @@ namespace NetifyAPI.Migrations
 
                     b.ToTable("ArtistTrack");
                 });
-
 
             modelBuilder.Entity("ArtistUser", b =>
                 {
@@ -70,12 +67,9 @@ namespace NetifyAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-
                     b.HasKey("ArtistId");
 
-
                     b.ToTable("Artists");
-
                 });
 
             modelBuilder.Entity("NetifyAPI.Models.Track", b =>
@@ -94,12 +88,7 @@ namespace NetifyAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("TrackId");
-
-
 
                     b.ToTable("Tracks");
                 });
@@ -120,7 +109,6 @@ namespace NetifyAPI.Migrations
 
                     b.ToTable("Users");
                 });
-
 
             modelBuilder.Entity("TrackUser", b =>
                 {
@@ -156,20 +144,16 @@ namespace NetifyAPI.Migrations
                 {
                     b.HasOne("NetifyAPI.Models.Artist", null)
                         .WithMany()
-
                         .HasForeignKey("ArtistsArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-
                     b.HasOne("NetifyAPI.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UsersUserId")
-
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
-
 
             modelBuilder.Entity("TrackUser", b =>
                 {
@@ -184,7 +168,6 @@ namespace NetifyAPI.Migrations
                         .HasForeignKey("UsersUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
                 });
 #pragma warning restore 612, 618
         }
