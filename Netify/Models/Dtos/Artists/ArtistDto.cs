@@ -10,6 +10,9 @@ namespace NetifyAPI.Models.Dtos.Artists
         [JsonPropertyName("id")]
         public string SpotifyArtistId { get; set; }
 
+        [JsonPropertyName("popularity")]
+        public int Popularity { get; set; }
+
         [JsonPropertyName("genres")]
         public ICollection<string> Genres { get; set; }
     }

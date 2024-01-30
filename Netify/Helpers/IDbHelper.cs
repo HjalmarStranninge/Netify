@@ -11,9 +11,11 @@ namespace NetifyAPI.Helpers
     public interface IDbHelper
     {
         public void AddArtistToPerson(ArtistSearchViewModel artist, int userId);
+
         public void SaveUserToDatabase(UserDto user);
         public void SaveTrack(string spotifyTrackId, string trackTitle, int userId, List<Artist> artists);
     }    
+
     public class DbHelper : IDbHelper
     {
         private readonly NetifyContext _context;
@@ -21,6 +23,7 @@ namespace NetifyAPI.Helpers
         {
             _context = context;
         }
+
         // Saves a new user to the database.
         public void SaveUserToDatabase(UserDto user)
         {
@@ -38,6 +41,7 @@ namespace NetifyAPI.Helpers
             }
         }
 
+
         // Connects a selected artist to the current user.
         public void AddArtistToPerson(ArtistSearchViewModel artistViewModel, int userId)
         {
@@ -45,7 +49,9 @@ namespace NetifyAPI.Helpers
             {
                 SpotifyArtistId = artistViewModel.SpotifyArtistId,
                 ArtistName = artistViewModel.ArtistName,
-                //Genres = artistViewModel.Genres,
+
+                //Genres = (ICollection<Genre>)artistViewModel.Genres,
+
             };
 
             var user =

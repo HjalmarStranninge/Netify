@@ -14,7 +14,11 @@ namespace NetifyAPI.Models
         public string ArtistName { get; set; }
 
         public virtual ICollection<Track> Tracks { get; set; }
+
         public virtual ICollection<User> Users { get; set; }
+
+
+        //public virtual ICollection<Genre> Genres { get; set; }
 
     }
 }

@@ -6,31 +6,36 @@ using NetifyAPI.Models.Dtos;
 using NetifyAPI.Models.Viewmodels;
 using NetifyAPI.Helpers;
 using System.Net;
+using NetifyAPI.Repositories;
 
 namespace NetifyAPI.Handlers
 {
     public class UserHandler
     {
-        // Get all users
-        public static IResult ListUsers(NetifyContext context)
+        // Get all users. Repository method lists all users, viewmodel displays relevant data.
+        public static IResult ListUsers(IUserRepository repository)
         {
-            UserListViewModel[] result = context.Users
+            UserListViewModel[] result = repository.ListAllUsers()
                 .Select(u => new UserListViewModel()
                 {
                     Username = u.Username
                 })
                 .ToArray();
 
+            // If no users in database, return not found error message
+            if (result == null)
+            {
+                return Results.NotFound();
+            }
+
             return Results.Json(result);
 
-            // TODO
-            // Lägg till felhantering
         }
 
-        // Search users.(Main use to get userId)
-        public static IResult SearchUsers(NetifyContext context, string query)
+        // Search users.(Main function is to get userId). Repository method lists all users, handler filters out through query then displays relevant data through viewmodel
+        public static IResult SearchUsers(IUserRepository repository, string query)
         {
-            var searchUser = context.Users
+            var searchUser = repository.ListAllUsers()
                 .Where(u => u.Username.Contains(query))
                 .Select(u => new UserViewModel()
                 {
@@ -39,21 +44,26 @@ namespace NetifyAPI.Handlers
                 })
                 .ToList();
 
+            // If search for users in database is null, return not found error message
+            if (searchUser == null)
+            {
+                return Results.NotFound();
+            }
+
             return Results.Json(searchUser);
         }
 
         // View user
-        public static IResult ViewUser(NetifyContext context, int userId)
+        public static IResult ViewUser(IUserRepository repository, int userId)
         {
-            User user = UserFinder(context, userId);
+            User? user = repository.GetUser(userId);
 
             if (user == null)
             {
                 return Results.NotFound();
             }
 
-            // begränsning på hur mycket som ska visas om vi vill ha det
-            // tänker att man vill ha en topp?
+            // begränsning på hur mycket som ska visas (om vi nu vill ha det)
             int genreLimit = 3;
             int artistLimit = 3;
             int trackLimit = 3;
@@ -83,17 +93,16 @@ namespace NetifyAPI.Handlers
                     })
                     .Take(trackLimit)
                     .ToList(),
-
             };
             return Results.Json(userView);
-
         }
 
 
         // Get a specfic user and their liked genres
+
         //public static IResult UserGenres(NetifyContext context, int userId)
         //{
-        //    User user = UserFinder(context, userId);
+        //    User? user = UserFinder(context, userId);
 
         //    if (user == null)
         //    {
@@ -109,9 +118,10 @@ namespace NetifyAPI.Handlers
         //    return Results.Json(genreList);
         //}
 
-        public static IResult UserArtists(NetifyContext context, int userId)
+
+        public static IResult UserArtists(IUserRepository repository, int userId)
         {
-            User user = UserFinder(context, userId);
+            User? user = repository.GetUser(userId);
 
             if (user == null)
             {
@@ -124,12 +134,17 @@ namespace NetifyAPI.Handlers
                     ArtistName =a.ArtistName,
                 })
                 .ToList();
+
+            if (artistList == null)
+            {
+                return Results.NotFound();
+            }
             return Results.Json(artistList);
         }
 
-        public static IResult UserTracks(NetifyContext context, int userId)
+        public static IResult UserTracks(IUserRepository repository, int userId)
         {
-            User user = UserFinder(context, userId);
+            User? user = repository.GetUser(userId);
 
             if (user == null)
             {
@@ -143,8 +158,14 @@ namespace NetifyAPI.Handlers
                     Artists = a.Artists,
                 })
                 .ToList();
+
+            if (trackList == null)
+            {
+                return Results.NotFound();
+            }
             return Results.Json(trackList);
         }
+
 
         private static User? UserFinder(NetifyContext context, int userId)
         {
@@ -156,14 +177,14 @@ namespace NetifyAPI.Handlers
                 .SingleOrDefault();
         }
 
-        public IResult CreateNewUser(NetifyContext context, UserDto user)
+
+        public IResult CreateNewUser(IUserRepository repository, UserDto userDto)
         {
             try
             {
-                if (!context.Users.Any(u => u.Username.Equals(user.Username)))
+                if (!repository.ListAllUsers().Any(u => u.Username.Equals(userDto.Username)))
                 {
-                    DbHelper dbHelper = new DbHelper(context);
-                    dbHelper.SaveUserToDatabase(user);
+                    repository.SaveUserToDatabase(userDto);
                     return Results.StatusCode((int)HttpStatusCode.Created);
                 }
                 else
@@ -176,7 +197,5 @@ namespace NetifyAPI.Handlers
                 return Results.StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
-
-
     }
 }

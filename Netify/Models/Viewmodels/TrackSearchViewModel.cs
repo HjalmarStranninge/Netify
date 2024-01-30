@@ -8,7 +8,11 @@ namespace NetifyAPI.Models.Viewmodels
         public string SpotifyTrackId { get; set; }
         [JsonPropertyName ("name")]
         public string Title { get; set; }
+
         [JsonPropertyName("artists")]
         public ICollection<Artist> Artists { get; set; }
+
+        public double Danceability { get; set; }
+
     }
 }

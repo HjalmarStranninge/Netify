@@ -1,7 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using NetifyAPI.Data;
 using NetifyAPI.Handlers;
+
 using NetifyAPI.Helpers;
+
+using NetifyAPI.Repositories;
+
 using NetifyAPI.Spotify;
 
 
@@ -15,12 +19,15 @@ namespace Netify
             string connectionString = builder.Configuration.GetConnectionString("NetifyContext");
             builder.Services.AddDbContext<NetifyContext>(opt => opt.UseSqlServer(connectionString));
 
+            builder.Services.AddScoped<IUserRepository, DbUserHandlerRepository>();
+
             string clientId = builder.Configuration.GetValue<string>("Spotify:ClientId");
             string clientSecret = builder.Configuration.GetValue<string>("Spotify:ClientSecret");
 
             builder.Services.AddSingleton<ISpotifyService>(x => new SpotifyService(clientId, clientSecret));
 
             builder.Services.AddScoped<IDbHelper, DbHelper>();
+
 
             var app = builder.Build();
 
@@ -33,12 +40,14 @@ namespace Netify
             app.MapGet("/users", UserHandler.ListUsers); // Get all users in db
             app.MapGet("/user/{userId}", UserHandler.ViewUser); // Get a specific user
             app.MapGet("/user/search", UserHandler.SearchUsers); // Search users,"?query={name}"
-            //app.MapGet("/user/{userId}/genres", UserHandler.UserGenres); // Get a specific user and their liked genres
-            app.MapGet("/users/{userId}/artists", UserHandler.UserArtists); // Get a specific user and their liked artists
-            app.MapGet("/users/{userId}/tracks", UserHandler.UserTracks); // Get a specific user and their liked tracks
+
+            //app.MapGet("/user/{userId}/genres", UserHandler.UserGenres); // Get a specfic user and their liked genres
+            app.MapGet("/user/{userId}/artists", UserHandler.UserArtists); // Get a specific user and their liked artists
+            app.MapGet("/user/{userId}/tracks", UserHandler.UserTracks); // Get a specific user and their liked tracks
 
 
             // POST
+
             app.MapPost("/user/{userId}/genre/{genreId}", () => ""); // Add a specific user to a genre
             app.MapPost("/user/{userId}/artist/{artistId}", TrackHandler.SaveTrack); // Add a specific user to a artist
             app.MapPost("/user/savetrack", TrackHandler.SaveTrack); // Add a specific user to a tracks
@@ -48,6 +57,7 @@ namespace Netify
             app.MapGet("/spotifytracksearch/{query}/", TrackHandler.SearchTracks);
 
             app.MapGet("/spotifyartistsearch", async (ISpotifyService handler, string query, int? offset) => {
+
                 if (String.IsNullOrEmpty(query))
                 {
                     throw new ArgumentException("no query");
