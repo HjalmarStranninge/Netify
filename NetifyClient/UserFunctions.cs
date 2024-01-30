@@ -40,7 +40,7 @@ namespace NetifyClient
                     return true;
 
                 case 3:
-                    // Search artists and add as favorite.
+                    await SearchArtist(userId, client);
                     return true;
 
                 case 4:
@@ -123,6 +123,69 @@ namespace NetifyClient
                 {
                     // Handle error
                     Console.WriteLine($"Failed to search tracks. Status code: {response.StatusCode}");
+                    Console.ReadLine();
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Exception during HTTP request: {ex.Message}");
+                Console.ReadLine();
+            }
+        }
+        // Allows the user to search for a track and add it to their favorites, saving it to the database.
+        public async static Task SearchArtist(int userId, HttpClient client)
+        {
+            Utilities.HeaderFooter();
+            var trackQuery = Utilities.SearchPrompt("What are you looking for?");
+            int offset = 0;
+
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"/spotifyartistsearch/{trackQuery}/{offset}");
+                if (response.IsSuccessStatusCode)
+                {
+                    // Unpacks the response from the API.
+
+                    var content = await response.Content.ReadAsStringAsync();
+                    var artists = JsonSerializer.Deserialize<List<ArtistSearchViewModel>>(content);
+
+                    
+
+                    var artistSelected = await Utilities.ArtistSelection(artists, client, trackQuery);
+
+                    // Dtos of the track and its artists are created.
+                    
+                   
+                    var artistDto = new ArtistDto
+                    {
+                        Name = artistSelected.ArtistName
+                    };
+
+                    // Connects the track to the user if that option is selected.
+                    if (Utilities.SaveArtist(artistSelected) == 0)
+                    {
+                        var jsonPostRequest = JsonSerializer.Serialize(artistDto);
+                        var postContent = new StringContent(jsonPostRequest, Encoding.UTF8, "application/json");
+                        HttpResponseMessage saveResponse = await client.PostAsync("/user/savetrack", postContent);
+                        if (saveResponse.IsSuccessStatusCode)
+                        {
+                            Utilities.HeaderFooter();
+                            await Console.Out.WriteLineAsync($"Added {artistSelected.ArtistName}\n" +
+                                $" to your list of favorite artists!");
+                            Thread.Sleep(2000);
+                        }
+                        else
+                        {
+                            Utilities.HeaderFooter();
+                            await Console.Out.WriteLineAsync("An error occurred. Artist not saved.");
+                            Console.ReadLine();
+                        }
+                    }
+                }
+                else
+                {
+                    // Handle error
+                    Console.WriteLine($"Failed to search artists. Status code: {response.StatusCode}");
                     Console.ReadLine();
                 }
             }
