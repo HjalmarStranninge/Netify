@@ -97,27 +97,6 @@ namespace NetifyAPI.Handlers
         }
 
 
-        // Get a specfic user and their liked genres
-
-        //public static IResult UserGenres(NetifyContext context, int userId)
-        //{
-        //    User? user = UserFinder(context, userId);
-
-        //    if (user == null)
-        //    {
-        //        return Results.NotFound();
-        //    }
-
-        //    List<GenreViewModel> genreList = user.Genres
-        //        .Select(g => new GenreViewModel()
-        //        {
-        //            Title = g.Title,
-        //        })
-        //        .ToList();
-        //    return Results.Json(genreList);
-        //}
-
-
         public static IResult UserArtists(IUserRepository repository, int userId)
         {
             User? user = repository.GetUser(userId);
@@ -166,18 +145,7 @@ namespace NetifyAPI.Handlers
         }
 
 
-        private static User? UserFinder(NetifyContext context, int userId)
-        {
-            return context.Users
-                //.Include(u => u.Genres)
-                .Include(u => u.Artists)
-                .Include(u => u.Tracks)
-                .Where(u => u.UserId == userId)
-                .SingleOrDefault();
-        }
-
-
-        public IResult CreateNewUser(IUserRepository repository, UserDto userDto)
+        public static IResult CreateNewUser(IUserRepository repository, UserDto userDto)
         {
             try
             {
