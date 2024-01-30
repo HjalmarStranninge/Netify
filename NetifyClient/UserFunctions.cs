@@ -55,7 +55,42 @@ namespace NetifyClient
 
             }
         }
+        //List favorite artists of user
+        public async static Task ListArtists(int userId, HttpClient client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"/user/{userId}/artists");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var artists = JsonSerializer.Deserialize<List<ArtistViewModel>>(content);
 
+                    Utilities.HeaderFooter();
+                    Console.WriteLine("Your favorite artists:");
+
+                    foreach (var artist in artists)
+                    {
+                        Console.WriteLine($"{artist.ArtistName}");
+                    }
+
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+
+                }
+                {
+                    Console.WriteLine($"Failed to list tracks. Status code: {response.StatusCode}");
+                    Console.ReadLine();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during HTTP request: {ex.Message}");
+                Console.ReadLine();
+            }
+        }
+        // List favorite tracks of user
         public async static Task ListTracks(int userId, HttpClient client)
         {
             try
