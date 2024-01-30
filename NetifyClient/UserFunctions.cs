@@ -11,7 +11,7 @@ namespace NetifyClient
 {
     public class UserFunctions
     { 
-        public static async Task UserMenu(int userId, HttpClient client)
+        public static async Task<bool> UserMenu(int userId, HttpClient client)
         {
             var menuOptions = new List<string>()
             {
@@ -19,7 +19,8 @@ namespace NetifyClient
                 "Your favorite tracks",
                 "Your favorite genres",
                 "Search artists",
-                "Search tracks"
+                "Search tracks",
+                "Log out"
             };
 
             var selectedOption = Utilities.ArrowkeySelectionVertical(menuOptions);
@@ -28,90 +29,104 @@ namespace NetifyClient
             {
                 case 0:
                     // Show favorite artists.
-                    break;
+                    return true; 
+
                 case 1:
                     // Show favorite tracks.
-                    break;
+                    return true; 
+
                 case 2:
                     // Show favorite genres.
-                    break;
+                    return true;
+
                 case 3:
                     // Search artists and add as favorite.
-                    break;
+                    return true;
 
                 case 4:
+                    await SearchTracks(userId, client);
+                    return true;
+                    
+                case 5:
+                    return false;                  
 
+                default:
+                    return true;
+
+            }
+        }
+
+        // Allows the user to search for a track and add it to their favorites, saving it to the database.
+        public async static Task SearchTracks(int userId, HttpClient client)
+        {
+            Console.Clear();
+            var trackQuery = Utilities.SearchPrompt("What are you looking for?");
+
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"/spotifytracksearch/{trackQuery}");
+                if (response.IsSuccessStatusCode)
+                {
+                    // Unpacks the response from the API.
+
+                    var content = await response.Content.ReadAsStringAsync();
+                    var tracks = JsonSerializer.Deserialize<List<TrackSearchViewModel>>(content);
+
+                    // User selects a track.
                     Console.Clear();
-                    var trackQuery = Utilities.SearchPrompt("What are you looking for?");
+                    var trackSelected = Utilities.TrackSelection(tracks);
 
-                    try
+                    // Dtos of the track and its artists are created.
+                    var artists = new List<ArtistDto>();
+
+                    foreach (var artist in trackSelected.Artists)
                     {
-                        HttpResponseMessage response = await client.GetAsync($"/spotifytracksearch/{trackQuery}/{userId}");
-                        if (response.IsSuccessStatusCode)
+                        var artistDto = new ArtistDto();
+
+                        artistDto.Name = artist.Name;
+                        artistDto.SpotifyArtistId = artist.SpotifyArtistId;
+                        artists.Add(artistDto);
+
+                    }
+                    var trackDto = new TrackDto
+                    {
+                        Title = trackSelected.Title,
+                        SpotifyTrackId = trackSelected.SpotifyTrackId,
+                        Artists = artists,
+                        UserId = userId
+                    };
+
+                    // Connects the track to the user if that option is selected.
+                    if (Utilities.SaveTrack(trackSelected) == 0)
+                    {
+                        var jsonPostRequest = JsonSerializer.Serialize(trackDto);
+                        var postContent = new StringContent(jsonPostRequest, Encoding.UTF8, "application/json");
+                        HttpResponseMessage saveResponse = await client.PostAsync("/user/savetrack", postContent);
+                        if (saveResponse.IsSuccessStatusCode)
                         {
-                            // Handle the response content here if needed
-                            var content = await response.Content.ReadAsStringAsync();
-
-                            var tracks  = JsonSerializer.Deserialize<List<TrackSearchViewModel>>(content);
-
                             Console.Clear();
-                            var trackSelected = Utilities.TrackSelection(tracks);
-
-                            var artists = new List<ArtistDto>(); 
-
-                            foreach(var artist in trackSelected.Artists)
-                            {
-                                var artistDto = new ArtistDto();
-
-                                artistDto.Name = artist.Name;
-                                artistDto.SpotifyArtistId = artist.SpotifyArtistId;
-                                artists.Add(artistDto);
-                                                               
-                            }
-                            var trackDto = new TrackDto
-                            {
-                                Title = trackSelected.Title,
-                                SpotifyTrackId = trackSelected.SpotifyTrackId,
-                                Artists = artists,
-                                UserId = userId
-                            };
-                            
-                            
-                            if (Utilities.SaveTrack(trackSelected) == 0)
-                            {
-                                var jsonPostRequest = JsonSerializer.Serialize(trackDto);
-                                var postContent = new StringContent(jsonPostRequest, Encoding.UTF8, "application/json");
-                                HttpResponseMessage saveResponse = await client.PostAsync("/user/savetrack", postContent);
-                                if (saveResponse.IsSuccessStatusCode)
-                                {
-                                    Console.Clear();
-                                    await Console.Out.WriteLineAsync("Track saved!");
-                                    Console.ReadLine();
-                                }
-                                else
-                                {
-                                    Console.Clear();
-                                    await Console.Out.WriteLineAsync("An error occurred. Track not saved.");
-                                    Console.ReadLine();
-                                }
-                            }
+                            await Console.Out.WriteLineAsync("Track saved!");
+                            Console.ReadLine();
                         }
                         else
                         {
-                            // Handle error
-                            Console.WriteLine($"Failed to search tracks. Status code: {response.StatusCode}");
+                            Console.Clear();
+                            await Console.Out.WriteLineAsync("An error occurred. Track not saved.");
                             Console.ReadLine();
                         }
                     }
-                    catch(Exception ex )
-                    {
-                        await Console.Out.WriteLineAsync($"Exception during HTTP request: {ex.Message}");
-                        Console.ReadLine();
-                    }
-                    break;
-
-                default:
-                    break;
+                }
+                else
+                {
+                    // Handle error
+                    Console.WriteLine($"Failed to search tracks. Status code: {response.StatusCode}");
+                    Console.ReadLine();
+                }
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"Exception during HTTP request: {ex.Message}");
+                Console.ReadLine();
             }
         }
     }

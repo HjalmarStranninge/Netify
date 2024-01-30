@@ -12,10 +12,9 @@ namespace NetifyAPI.Models
         public string SpotifyArtistId { get; set; }
         [JsonPropertyName("name")]
         public string ArtistName { get; set; }
-        public string Bio { get; set; }
 
         public virtual ICollection<Track> Tracks { get; set; }
-        [NotMapped]
-        public virtual ICollection<string> Genres { get; set; }
+        public virtual ICollection<User> Users { get; set; }
+
     }
 }

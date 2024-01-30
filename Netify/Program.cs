@@ -18,7 +18,7 @@ namespace Netify
             string clientId = builder.Configuration.GetValue<string>("Spotify:ClientId");
             string clientSecret = builder.Configuration.GetValue<string>("Spotify:ClientSecret");
 
-            builder.Services.AddSingleton<ISpotifyHandler>(x => new SpotifyHandler(clientId, clientSecret));
+            builder.Services.AddSingleton<ISpotifyService>(x => new SpotifyService(clientId, clientSecret));
 
             builder.Services.AddScoped<IDbHelper, DbHelper>();
 
@@ -33,7 +33,7 @@ namespace Netify
             app.MapGet("/users", UserHandler.ListUsers); // Get all users in db
             app.MapGet("/user/{userId}", UserHandler.ViewUser); // Get a specific user
             app.MapGet("/user/search", UserHandler.SearchUsers); // Search users,"?query={name}"
-            app.MapGet("/user/{userId}/genres", UserHandler.UserGenres); // Get a specific user and their liked genres
+            //app.MapGet("/user/{userId}/genres", UserHandler.UserGenres); // Get a specific user and their liked genres
             app.MapGet("/users/{userId}/artists", UserHandler.UserArtists); // Get a specific user and their liked artists
             app.MapGet("/users/{userId}/tracks", UserHandler.UserTracks); // Get a specific user and their liked tracks
 
@@ -45,9 +45,9 @@ namespace Netify
 
 
             // SPOTIFY
-            app.MapGet("/spotifytracksearch/{query}/{userId}", TrackHandler.SearchTracks);
+            app.MapGet("/spotifytracksearch/{query}/", TrackHandler.SearchTracks);
 
-            app.MapGet("/spotifyartistsearch", async (ISpotifyHandler handler, string query, int? offset) => {
+            app.MapGet("/spotifyartistsearch", async (ISpotifyService handler, string query, int? offset) => {
                 if (String.IsNullOrEmpty(query))
                 {
                     throw new ArgumentException("no query");

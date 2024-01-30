@@ -13,25 +13,24 @@ using NetifyAPI.Models.Dtos.Artists;
 namespace NetifyAPI.Spotify
 {
     // Class for handling interaction with the Spotify API. The interface is used for dependency injection.
-    public interface ISpotifyHandler
+    public interface ISpotifyService
     {
-        Task <string> GetAccessToken();
+        Task<string> GetAccessToken();
         Task<List<TrackSearchViewModel>> SearchForTracks(string query, int offset);
         Task<List<ArtistSearchViewModel>> SearchForArtists(string query, int offset);
     }
-    public class SpotifyHandler : ISpotifyHandler
+    public class SpotifyService : ISpotifyService
     {
         private string? _accessToken;
         private HttpClient _httpClient;
         private string _clientId;
         private string _clientSecret;
         private DateTime _lastUpdatedToken;
-        public SpotifyHandler(string clientId, string clientSecret) : this(new HttpClient(), clientId, clientSecret)
+        public SpotifyService(string clientId, string clientSecret) : this(new HttpClient(), clientId, clientSecret)
         {
 
         }
-
-        public SpotifyHandler(HttpClient httpClient, string clientId, string clientSecret)
+        public SpotifyService(HttpClient httpClient, string clientId, string clientSecret)
         {
             _httpClient = httpClient;
             _clientId = clientId;
@@ -47,9 +46,9 @@ namespace NetifyAPI.Spotify
             {
                 return await GetToken(_clientId, _clientSecret);
             }
-            
+
             // Otherwise just returns the token that already exists.
-                return _accessToken;           
+            return _accessToken;
         }
 
         // Sends a post request to the Spotify API and returns an Access token.
@@ -58,7 +57,7 @@ namespace NetifyAPI.Spotify
             // Creates new Http post request.
             var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.spotify.com/api/token");
 
-            // Sets the header of the request to the parameters needed to generate new token
+            // Sets the header of the request to the parameters needed to generate new token.
             request.Headers.Authorization = new AuthenticationHeaderValue(
                 "Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}")));
 
@@ -66,7 +65,7 @@ namespace NetifyAPI.Spotify
             {
                 {"grant_type", "client_credentials"}
             });
-           
+
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
@@ -74,8 +73,8 @@ namespace NetifyAPI.Spotify
             var responseString = await response.Content.ReadAsStringAsync();
             var authResult = JsonSerializer.Deserialize<AuthResult>(responseString);
 
-            return authResult.AccessToken;          
-                      
+            return authResult.AccessToken;
+
         }
 
         // Search for tracks through the Spotify API.
@@ -101,7 +100,7 @@ namespace NetifyAPI.Spotify
             var trackDtos = searchResponse.Tracks.Items;
 
             // Converts the Dto into a ViewModel before returning.
-            var trackViewModels= new List<TrackSearchViewModel>();
+            var trackViewModels = new List<TrackSearchViewModel>();
             foreach (var trackDto in trackDtos)
             {
                 var trackViewModel = new TrackSearchViewModel
@@ -141,12 +140,11 @@ namespace NetifyAPI.Spotify
                     ArtistName = artistDto.Name,
                     SpotifyArtistId = artistDto.SpotifyArtistId,
                     Genres = artistDto.Genres
-        
+
                 };
 
                 artistViewModels.Add(artistViewModel);
             }
-
             return artistViewModels;
         }
     }

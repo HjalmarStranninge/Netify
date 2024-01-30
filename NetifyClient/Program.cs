@@ -15,6 +15,7 @@ namespace NetifyClient
 
                 var menuChoice = Utilities.ArrowkeySelectionHorizontal(options);
 
+                // Creates a new instance of HttpClient and fetches all users from the database.
                 using (HttpClient client = new HttpClient())
                 {
                     if(menuChoice == 0)
@@ -43,7 +44,10 @@ namespace NetifyClient
                         // Plus 1 since the list index starts at 0.
                         int userIdSelected =  Utilities.ArrowkeySelectionVertical(userNames) + 1;
 
-                        await UserFunctions.UserMenu(userIdSelected, client);
+                        // Continously runs usermenu until exited.
+                        while(await UserFunctions.UserMenu(userIdSelected, client))
+                        {
+                        }
                     }
                     else
                     {

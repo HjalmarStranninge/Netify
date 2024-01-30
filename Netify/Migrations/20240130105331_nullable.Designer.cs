@@ -12,8 +12,8 @@ using NetifyAPI.Data;
 namespace NetifyAPI.Migrations
 {
     [DbContext(typeof(NetifyContext))]
-    [Migration("20240129173339_nullableArtist")]
-    partial class nullableArtist
+    [Migration("20240130105331_nullable")]
+    partial class nullable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,13 +51,6 @@ namespace NetifyAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Bio")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("GenreId")
-                        .HasColumnType("int");
-
                     b.Property<string>("SpotifyArtistId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -67,33 +60,9 @@ namespace NetifyAPI.Migrations
 
                     b.HasKey("ArtistId");
 
-                    b.HasIndex("GenreId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Artists");
-                });
-
-            modelBuilder.Entity("NetifyAPI.Models.Genre", b =>
-                {
-                    b.Property<int>("GenreId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GenreId"), 1L, 1);
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("GenreId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Genres");
                 });
 
             modelBuilder.Entity("NetifyAPI.Models.Track", b =>
@@ -156,19 +125,8 @@ namespace NetifyAPI.Migrations
 
             modelBuilder.Entity("NetifyAPI.Models.Artist", b =>
                 {
-                    b.HasOne("NetifyAPI.Models.Genre", null)
-                        .WithMany("Artists")
-                        .HasForeignKey("GenreId");
-
                     b.HasOne("NetifyAPI.Models.User", null)
                         .WithMany("Artists")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("NetifyAPI.Models.Genre", b =>
-                {
-                    b.HasOne("NetifyAPI.Models.User", null)
-                        .WithMany("Genres")
                         .HasForeignKey("UserId");
                 });
 
@@ -179,16 +137,9 @@ namespace NetifyAPI.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("NetifyAPI.Models.Genre", b =>
-                {
-                    b.Navigation("Artists");
-                });
-
             modelBuilder.Entity("NetifyAPI.Models.User", b =>
                 {
                     b.Navigation("Artists");
-
-                    b.Navigation("Genres");
 
                     b.Navigation("Tracks");
                 });
