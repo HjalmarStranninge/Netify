@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace NetifyAPI.Models
@@ -11,9 +12,13 @@ namespace NetifyAPI.Models
         public string SpotifyArtistId { get; set; }
         [JsonPropertyName("name")]
         public string ArtistName { get; set; }
-        public string Bio { get; set; }
 
         public virtual ICollection<Track> Tracks { get; set; }
-        public virtual ICollection<Genre> Genres { get; set; }
+
+        public virtual ICollection<User> Users { get; set; }
+
+
+        //public virtual ICollection<Genre> Genres { get; set; }
+
     }
 }
