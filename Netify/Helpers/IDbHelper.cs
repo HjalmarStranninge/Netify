@@ -126,7 +126,7 @@ namespace NetifyAPI.Helpers
                 .Include(u => u.Tracks)
                 .SingleOrDefault();
 
-            if (user != null && user.Tracks.Contains(newTrack))
+            if (user != null && !user.Tracks.Contains(newTrack))
             {
                 try
                 {

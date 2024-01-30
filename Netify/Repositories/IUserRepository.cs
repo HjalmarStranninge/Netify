@@ -55,7 +55,7 @@ namespace NetifyAPI.Repositories
         {
             User? user = _context.Users.
                 Where(u => u.UserId == userId)
-                .Include(u => u.Genres)
+                //.Include(u => u.Genres)
                 .Include(u => u.Artists)
                 .Include(u => u.Tracks)
                 .SingleOrDefault();
