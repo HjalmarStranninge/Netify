@@ -30,17 +30,17 @@ namespace NetifyClient
                     if (i == selectedOption)
                     {
                         Console.Write("\n  ");
-                        Console.BackgroundColor = ConsoleColor.Gray;
-                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.DarkGreen;
+                        Console.ForegroundColor = ConsoleColor.Gray;
 
                         Console.Write($"{menuOptions[i]}");
                         Console.ResetColor();
-                        Console.Write($"".PadRight(4));
+                        Console.Write($"".PadRight(3));
                     }
                     else
                     {
                         Console.Write("\n  ");
-                        Console.Write($"{menuOptions[i]}    ".PadRight(4));
+                        Console.Write($"{menuOptions[i]}   ".PadRight(3));
                     }
 
                     if (i + 1 < menuOptions.Length)
@@ -49,8 +49,8 @@ namespace NetifyClient
 
                         if (i + 1 == selectedOption)
                         {
-                            Console.BackgroundColor = ConsoleColor.Gray;
-                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = ConsoleColor.DarkGreen;
+                            Console.ForegroundColor = ConsoleColor.Gray;
                             Console.Write($"{menuOptions[i + 1]}");
                             Console.ResetColor();
                         }
@@ -102,8 +102,8 @@ namespace NetifyClient
                     if (i == selectedOption)
                     {
                         Console.Write("\n  ");
-                        Console.BackgroundColor = ConsoleColor.Gray;
-                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.DarkGreen;
+                        Console.ForegroundColor = ConsoleColor.Gray;
 
                         Console.Write($"{menuOptions[i]}");
                         Console.ResetColor();
@@ -121,8 +121,8 @@ namespace NetifyClient
 
                         if (i + 1 == selectedOption)
                         {
-                            Console.BackgroundColor = ConsoleColor.Gray;
-                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = ConsoleColor.DarkGreen;
+                            Console.ForegroundColor = ConsoleColor.Gray;
                             Console.Write($"{menuOptions[i + 1]}");
                             Console.ResetColor();
                         }
@@ -174,8 +174,8 @@ namespace NetifyClient
                     if (i == selectedOption)
                     {
                         Console.Write("\n  ");
-                        Console.BackgroundColor = ConsoleColor.Gray;
-                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.DarkGreen;
+                        Console.ForegroundColor = ConsoleColor.Gray;
 
                         Console.Write($"{menuOptions[i]}");
                         Console.ResetColor();
@@ -193,8 +193,8 @@ namespace NetifyClient
 
                         if (i + 1 == selectedOption)
                         {
-                            Console.BackgroundColor = ConsoleColor.Gray;
-                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = ConsoleColor.DarkGreen;
+                            Console.ForegroundColor = ConsoleColor.Gray;
                             Console.Write($"{menuOptions[i + 1]}");
                             Console.ResetColor();
                         }
@@ -253,8 +253,8 @@ namespace NetifyClient
                     // Highlights the currently selected option.
                     if (i == selectedOption)
                     {
-                        Console.BackgroundColor = ConsoleColor.Gray;
-                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.DarkGreen;
+                        Console.ForegroundColor = ConsoleColor.Gray;
 
                         Console.WriteLine(menuOptions[i]);
                         Console.ResetColor();
@@ -331,8 +331,8 @@ namespace NetifyClient
                     // Highlights the currently selected option.
                     if (i == selectedOption)
                     {
-                        Console.BackgroundColor = ConsoleColor.Gray;
-                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.DarkGreen;
+                        Console.ForegroundColor = ConsoleColor.Gray;
 
                         Console.WriteLine($"{menuOptions[i].Title}");
                         ArtistWriteLine(menuOptions[i].Artists);
@@ -467,6 +467,7 @@ namespace NetifyClient
         public static void HeaderFooter()
         {
             string header = "__  __  ____ ______ __  ____ _  _\r\n||\\ || ||    | || | || ||    \\\\//\r\n||\\\\|| ||==    ||   || ||==   )/ \r\n|| \\|| ||___   ||   || ||    //  ";
+            string headerSecondPart = "----------------------------------\n";
             string footer = "==================================\n";
 
             
@@ -480,18 +481,20 @@ namespace NetifyClient
             Console.WriteLine(header);
 
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine(footer);
+            Console.WriteLine(headerSecondPart);
         }
 
         // Displays the full info for a track.
         public static void DisplayTrackInfo(TrackSearchViewModel track)
         {
-            Console.Write($"{track.Title}\n");
+            Console.WriteLine($"{track.Title}");
             Console.Write("By: ");
    
             foreach (var artist in track.Artists)
             {
-                Console.WriteLine($"{artist.Name} ");
+
+                Console.Write($"{artist.Name}  ");
+
             }
             Console.Write($"Danceability: {track.Danceability}");
             Console.WriteLine();
@@ -500,10 +503,15 @@ namespace NetifyClient
         // Displays the full info for an artist.
         public static void DisplayArtistInfo(ArtistSearchViewModel artist)
         {
-            Console.Write($"{artist.ArtistName}\n");
-            Console.Write($"Popularity: {artist.Popularity}");
-            
-            Console.WriteLine();
+
+            Console.WriteLine($"{artist.ArtistName}\tPopularity: {artist.Popularity}/100\n");
+            Console.WriteLine($"Genres: {artist.Genres.ToList()[0]}");
+            for(int i = 1; i < artist.Genres.ToList().Count; i++)
+            {
+                Console.WriteLine($"        {artist.Genres.ToList()[i]}");
+            }
+
+
         }
 
         public async static Task<ArtistSearchViewModel> ArtistSelection(List<ArtistSearchViewModel> menuOptions, HttpClient client, string query)
@@ -527,8 +535,8 @@ namespace NetifyClient
                     // Highlights the currently selected option.
                     if (i == selectedOption)
                     {
-                        Console.BackgroundColor = ConsoleColor.Gray;
-                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.DarkGreen;
+                        Console.ForegroundColor = ConsoleColor.Gray;
 
                         Console.WriteLine($"{menuOptions[i].ArtistName}");
                         await Console.Out.WriteLineAsync();
@@ -542,7 +550,6 @@ namespace NetifyClient
                 }
 
                 key = Console.ReadKey();
-
 
                 switch (key.Key)
                 {

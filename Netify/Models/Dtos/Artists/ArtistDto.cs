@@ -15,5 +15,10 @@ namespace NetifyAPI.Models.Dtos.Artists
 
         [JsonPropertyName("genres")]
         public ICollection<string> Genres { get; set; }
+
+        [JsonPropertyName("userid")]
+        public int UserId { get; set; }
+
+
     }
 }

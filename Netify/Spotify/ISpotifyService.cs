@@ -144,7 +144,8 @@ namespace NetifyAPI.Spotify
                 {
                     ArtistName = artistDto.Name,
                     SpotifyArtistId = artistDto.SpotifyArtistId,
-                    Popularity = artistDto.Popularity,
+                    Genres = artistDto.Genres,
+                    Popularity = artistDto.Popularity   
 
                 };
 
