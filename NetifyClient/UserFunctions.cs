@@ -60,7 +60,7 @@ namespace NetifyClient
         public async static Task SearchTracks(int userId, HttpClient client)
         {
             Utilities.HeaderFooter();
-            var trackQuery = Utilities.SearchPrompt(" What are you looking for?");
+            var trackQuery = Utilities.SearchPrompt("What are you looking for?");
             int offset = 0;
 
             try
@@ -107,7 +107,7 @@ namespace NetifyClient
                         if (saveResponse.IsSuccessStatusCode)
                         {
                             Utilities.HeaderFooter();
-                            await Console.Out.WriteLineAsync($"     Added {trackSelected.Title}\n" +
+                            await Console.Out.WriteLineAsync($"Added {trackSelected.Title}\n" +
                                 $" by {trackSelected.Artists.First().Name} to your favorites.");
                             Thread.Sleep(2000);
                         }
