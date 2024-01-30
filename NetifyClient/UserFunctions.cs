@@ -59,12 +59,13 @@ namespace NetifyClient
         // Allows the user to search for a track and add it to their favorites, saving it to the database.
         public async static Task SearchTracks(int userId, HttpClient client)
         {
-            Console.Clear();
-            var trackQuery = Utilities.SearchPrompt("What are you looking for?");
+            Utilities.HeaderFooter();
+            var trackQuery = Utilities.SearchPrompt(" What are you looking for?");
+            int offset = 0;
 
             try
             {
-                HttpResponseMessage response = await client.GetAsync($"/spotifytracksearch/{trackQuery}");
+                HttpResponseMessage response = await client.GetAsync($"/spotifytracksearch/{trackQuery}/{offset}");
                 if (response.IsSuccessStatusCode)
                 {
                     // Unpacks the response from the API.
@@ -74,7 +75,8 @@ namespace NetifyClient
 
                     // User selects a track.
                     Console.Clear();
-                    var trackSelected = Utilities.TrackSelection(tracks);
+
+                    var trackSelected =  await Utilities.TrackSelection(tracks, client, trackQuery);
 
                     // Dtos of the track and its artists are created.
                     var artists = new List<ArtistDto>();
@@ -104,13 +106,14 @@ namespace NetifyClient
                         HttpResponseMessage saveResponse = await client.PostAsync("/user/savetrack", postContent);
                         if (saveResponse.IsSuccessStatusCode)
                         {
-                            Console.Clear();
-                            await Console.Out.WriteLineAsync("Track saved!");
-                            Console.ReadLine();
+                            Utilities.HeaderFooter();
+                            await Console.Out.WriteLineAsync($"     Added {trackSelected.Title}\n" +
+                                $" by {trackSelected.Artists.First().Name} to your favorites.");
+                            Thread.Sleep(2000);
                         }
                         else
                         {
-                            Console.Clear();
+                            Utilities.HeaderFooter();
                             await Console.Out.WriteLineAsync("An error occurred. Track not saved.");
                             Console.ReadLine();
                         }

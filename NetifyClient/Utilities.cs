@@ -1,9 +1,11 @@
 ﻿using NetifyAPI.Models;
+using NetifyAPI.Models.Dtos.Tracks;
 using NetifyClient.ApiModels.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace NetifyClient
@@ -18,24 +20,97 @@ namespace NetifyClient
             ConsoleKeyInfo key;
             do
             {
+                HeaderFooter();
                 for (int i = 0; i < menuOptions.Length; i += 2)
                 {
 
                     // Highlights the currently selected option.
                     if (i == selectedOption)
                     {
-                        Console.Write("\n\t    ");
+                        Console.Write("\n  ");
                         Console.BackgroundColor = ConsoleColor.Gray;
                         Console.ForegroundColor = ConsoleColor.Black;
 
                         Console.Write($"{menuOptions[i]}");
                         Console.ResetColor();
-                        Console.Write($"".PadRight(23 - menuOptions[i].Length));
+                        Console.Write($"".PadRight(4));
                     }
                     else
                     {
-                        Console.Write("\n\t    ");
-                        Console.Write($"{menuOptions[i]}".PadRight(23));
+                        Console.Write("\n  ");
+                        Console.Write($"{menuOptions[i]}    ".PadRight(4));
+                    }
+
+                    if (i + 1 < menuOptions.Length)
+                    {
+                        Console.Write(" ");
+
+                        if (i + 1 == selectedOption)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Gray;
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.Write($"{menuOptions[i + 1]}");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.Write($"{menuOptions[i + 1]}");
+                        }
+                    }
+                    Console.WriteLine();
+                }
+
+                key = Console.ReadKey();
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.LeftArrow:
+                        if (selectedOption % 2 == 1 && selectedOption > 0)
+                        {
+                            selectedOption = (selectedOption - 1) % menuOptions.Length;
+                        }
+                        break;
+
+                    case ConsoleKey.RightArrow:
+                        if (selectedOption % 2 == 0 && selectedOption + 1 < menuOptions.Length)
+                        {
+                            selectedOption = (selectedOption + 1) % menuOptions.Length;
+                        }
+                        break;
+                }
+            } while (key.Key != ConsoleKey.Enter);
+
+            return selectedOption;
+        }
+
+        // Overload that also takes a track viewmodel to be able to display it above the arrow key selection options
+        public static int ArrowkeySelectionHorizontal(string[] menuOptions, TrackSearchViewModel track)
+        {
+            int selectedOption = 0;
+            ConsoleKeyInfo key;
+            do
+            {
+                HeaderFooter();
+                DisplayTrackInfo(track);
+
+                for (int i = 0; i < menuOptions.Length; i += 2)
+                {
+
+                    // Highlights the currently selected option.
+                    if (i == selectedOption)
+                    {
+                        Console.Write("\n  ");
+                        Console.BackgroundColor = ConsoleColor.Gray;
+                        Console.ForegroundColor = ConsoleColor.Black;
+
+                        Console.Write($"{menuOptions[i]}");
+                        Console.ResetColor();
+                        Console.Write($"".PadRight(4));
+                    }
+                    else
+                    {
+                        Console.Write("\n  ");
+                        Console.Write($"{menuOptions[i]}    ".PadRight(4));
                     }
 
                     if (i + 1 < menuOptions.Length)
@@ -91,7 +166,7 @@ namespace NetifyClient
             ConsoleKeyInfo key;
             do
             {
-                Console.Clear();
+                HeaderFooter();
 
                 // Calculate the range of options to display based on the current page
 
@@ -160,25 +235,21 @@ namespace NetifyClient
 
         }
 
-        // Method that displays menu options vertically and lets the user select with arrow keys.
-        public static TrackSearchViewModel TrackSelection(List<TrackSearchViewModel> menuOptions)
+        // Method that displays track search results vertically and lets the user select with arrow keys.
+        public async static Task <TrackSearchViewModel> TrackSelection(List<TrackSearchViewModel> menuOptions, HttpClient client, string query)
         {
             
             // Variables used for pagination.
 
             int selectedOption = 0;
             int currentPage = 0;
-            int pageSize = 10;
-
+            int offset = 0;
+            int startIndex = 0;
+            int endIndex = 6;
             ConsoleKeyInfo key;
             do
             {
-                Console.Clear();
-
-                // Calculate the range of options to display based on the current page
-
-                int startIndex = currentPage * pageSize;
-                int endIndex = Math.Min(startIndex + pageSize, menuOptions.Count);
+                HeaderFooter();
 
                 for (int i = startIndex; i < endIndex; i++)
                 {
@@ -222,18 +293,37 @@ namespace NetifyClient
                     // Pressing right/left jumps between pages.
 
                     case ConsoleKey.LeftArrow:
+
+                        // If you're not on the first page of results, a new call to the api is done and the offset is adjusted to return the previous 6 entries.
                         if (currentPage > 0)
                         {
-                            currentPage--;
-                            selectedOption = startIndex - 10;
+                            offset = offset - 6;
+                            HttpResponseMessage response = await client.GetAsync($"/spotifytracksearch/{query}/{offset}");
+                            if (response.IsSuccessStatusCode)
+                            {
+                                // Unpacks the response from the API.
+
+                                var content = await response.Content.ReadAsStringAsync();
+                                menuOptions = JsonSerializer.Deserialize<List<TrackSearchViewModel>>(content);
+                            }
+                            selectedOption = startIndex;
                         }
                         break;
 
                     case ConsoleKey.RightArrow:
-                        if (startIndex + pageSize < menuOptions.Count)
                         {
+                            // Ups the offset by 6 and makes a new call to the api to return the next 6 search results.
                             currentPage++;
-                            selectedOption = startIndex + 10;
+                            offset = offset + 6;
+                            HttpResponseMessage response = await client.GetAsync($"/spotifytracksearch/{query}/{offset}");
+                            if (response.IsSuccessStatusCode)
+                            {
+                                // Unpacks the response from the API.
+
+                                var content = await response.Content.ReadAsStringAsync();
+                                menuOptions = JsonSerializer.Deserialize<List<TrackSearchViewModel>>(content);
+                            }
+                            selectedOption = startIndex;
                         }
                         break;
                 }
@@ -244,16 +334,12 @@ namespace NetifyClient
 
         public static int SaveTrack(TrackSearchViewModel selectedTrack)
         {
-            Console.Clear();
-            Console.Write($"{selectedTrack.Title} by ");
-            foreach(var artist in selectedTrack.Artists)
-            {
-                Console.WriteLine($"{artist.Name} ");
-            }
+            HeaderFooter();
+            
 
             string[] options = { "Add to favorites", "Exit" };
 
-            var selectedOption = ArrowkeySelectionHorizontal(options);
+            var selectedOption = ArrowkeySelectionHorizontal(options, selectedTrack);
             if(selectedOption == 0)
             {
                 return 0;
@@ -303,5 +389,36 @@ namespace NetifyClient
 
             return query;
         }
+
+        public static void HeaderFooter()
+        {
+            string header = "__  __  ____ ______ __  ____ _  _\r\n||\\ || ||    | || | || ||    \\\\//\r\n||\\\\|| ||==    ||   || ||==   )/ \r\n|| \\|| ||___   ||   || ||    //  ";
+            string footer = "==================================\n";
+
+            
+            Console.Clear();
+
+            Console.SetCursorPosition(0, 20);
+            Console.WriteLine(footer);
+            Console.SetCursorPosition(0, 0);
+
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine(header);
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(footer);
+        }
+
+        public static void DisplayTrackInfo(TrackSearchViewModel track)
+        {
+            Console.Write($"{track.Title}\n");
+            Console.Write("By: ");
+            foreach (var artist in track.Artists)
+            {
+                Console.Write($"{artist.Name} ");
+            }
+            Console.WriteLine();
+        }
     }
+
 }
