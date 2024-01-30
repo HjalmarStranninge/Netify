@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NetifyAPI.Models.Dtos;
+using NetifyClient.ApiModels.Dtos;
 
-namespace NetifyClient.ApiModels
+namespace NetifyClient
 {
     internal class UserUtilites
     {

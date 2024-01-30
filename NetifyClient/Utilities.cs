@@ -1,7 +1,3 @@
-
-﻿using NetifyAPI.Models;
-using NetifyAPI.Models.Dtos;
-using NetifyAPI.Models.Dtos.Tracks;
 using NetifyClient.ApiModels.ViewModels;
 using System;
 using System.Collections.Generic;

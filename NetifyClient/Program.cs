@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using NetifyAPI.Models.Dtos;
 using NetifyClient.ApiModels;
+using NetifyClient.ApiModels.Dtos;
 
 namespace NetifyClient
 {
