@@ -12,6 +12,8 @@ namespace NetifyAPI.Models
         public string SpotifyArtistId { get; set; }
         [JsonPropertyName("name")]
         public string ArtistName { get; set; }
+        [JsonPropertyName("popularity")]
+        public int Popularity { get; set; }
 
         public virtual ICollection<Track> Tracks { get; set; }
 
