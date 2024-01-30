@@ -1,9 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NetifyAPI.Data;
 using NetifyAPI.Handlers;
-
-using NetifyAPI.Helpers;
-
 using NetifyAPI.Repositories;
 
 using NetifyAPI.Spotify;
@@ -26,7 +23,6 @@ namespace Netify
 
             builder.Services.AddSingleton<ISpotifyService>(x => new SpotifyService(clientId, clientSecret));
 
-            builder.Services.AddScoped<IDbHelper, DbHelper>();
 
 
             var app = builder.Build();

@@ -4,7 +4,6 @@ using NetifyAPI.Data;
 using NetifyAPI.Models;
 using NetifyAPI.Models.Dtos;
 using NetifyAPI.Models.Viewmodels;
-using NetifyAPI.Helpers;
 using System.Net;
 using NetifyAPI.Repositories;
 
