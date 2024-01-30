@@ -40,7 +40,8 @@ namespace NetifyClient
                             userNames.Add(user.Username);
                         }
 
-                        int userIdSelected =  Utilities.ArrowkeySelectionVertical(userNames);
+                        // Plus 1 since the list index starts at 0.
+                        int userIdSelected =  Utilities.ArrowkeySelectionVertical(userNames) + 1;
 
                         await UserFunctions.UserMenu(userIdSelected, client);
                     }

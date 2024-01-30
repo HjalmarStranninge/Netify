@@ -23,11 +23,11 @@ namespace NetifyAPI.Handlers
 
         }
 
-        public static async Task<IResult> SaveTrack(TrackDto track, int userId, IDbHelper helper)
+        public static async Task<IResult> SaveTrack(TrackDto track, IDbHelper helper)
         {
             try
             {
-                helper.SaveTrack(track, userId);
+                helper.SaveTrack(track);
             }
             catch (Exception ex)
             {

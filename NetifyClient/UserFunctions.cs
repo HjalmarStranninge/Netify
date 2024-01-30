@@ -56,16 +56,28 @@ namespace NetifyClient
 
                             Console.Clear();
                             var trackSelected = Utilities.TrackSelection(tracks);
+
+                            var artists = new List<ArtistDto>(); 
+
+                            foreach(var artist in trackSelected.Artists)
+                            {
+                                var artistDto = new ArtistDto();
+
+                                artistDto.Name = artist.Name;
+                                artistDto.SpotifyArtistId = artist.SpotifyArtistId;
+                                artists.Add(artistDto);
+                                                               
+                            }
                             var trackDto = new TrackDto
                             {
                                 Title = trackSelected.Title,
                                 SpotifyTrackId = trackSelected.SpotifyTrackId,
-                                Artists = trackSelected.Artists,
+                                Artists = artists,
                                 UserId = userId
                             };
                             
                             
-                            if (Utilities.SaveTrack(trackSelected) == 1)
+                            if (Utilities.SaveTrack(trackSelected) == 0)
                             {
                                 var jsonPostRequest = JsonSerializer.Serialize(trackDto);
                                 var postContent = new StringContent(jsonPostRequest, Encoding.UTF8, "application/json");

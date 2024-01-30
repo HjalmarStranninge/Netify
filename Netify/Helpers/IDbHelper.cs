@@ -11,9 +11,9 @@ namespace NetifyAPI.Helpers
         public void AddArtistToPerson(ArtistSearchViewModel artist, int userId);
         public void SaveUserToDatabase(UserDto user);
 
-        public void SaveTrack(TrackDto track, int userId);
+        public void SaveTrack(TrackDto track);
     }
-   
+
     public class DbHelper : IDbHelper
     {
         private readonly NetifyContext _context;
@@ -58,21 +58,87 @@ namespace NetifyAPI.Helpers
             _context.SaveChanges();
         }
 
-        public void SaveTrack(TrackDto trackDto, int userId)
+        public void SaveTrack(TrackDto trackDto)
         {
-            var track = new Track
+            string spotifyTrackId = trackDto.SpotifyTrackId;
+            string trackTitle = trackDto.Title;
+            int userId = trackDto.UserId;
+            List <Artist> artists = trackDto.Artists.ToList();
+
+            foreach (var artist in artists)
             {
-                SpotifySongId = trackDto.SpotifyTrackId,
-                Title = trackDto.Title,
+                Artist newArtist;
+                if (_context.Artists.Any(a => a.SpotifyArtistId == artist.SpotifyArtistId))
+                {
+                    newArtist = _context.Artists.Where(t => t.SpotifyArtistId == artist.SpotifyArtistId).Single();
+                }
+                else
+                {
+                    newArtist = new Artist
+                    {
+                        SpotifyArtistId = artist.SpotifyArtistId,
+                        ArtistName = artist.ArtistName
+                    };
+
+                    try
+                    {
+                        _context.Artists
+                        .Add(newArtist);
+                        _context.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Couldn't save artist to database. Exception: {ex}");
+                    }
+
+                }
+            }
+
+            Track newTrack;
+            if (_context.Tracks.Any(t => t.SpotifySongId == spotifyTrackId))
+            {
+                newTrack = _context.Tracks.Where(t => t.SpotifySongId == spotifyTrackId).Single();
+            }
+            else
+            {
+                newTrack = new Track
+                {
+                    SpotifySongId = trackDto.SpotifyTrackId,
+                    Title = trackDto.Title,
+                    Artists = trackDto.Artists
+                };
+                try
+                {
+                    _context.Tracks
+                .Add(newTrack);
+                    _context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Couldn't save track to database. Exception: {ex}");
+                }
             };
 
+
             var user = _context.Users
-                .Where (u => u.UserId == userId)
+                .Where(u => u.UserId == userId)
                 .SingleOrDefault();
 
-            user.Tracks
-                .Add(track);
-            _context.SaveChanges();
+            if (user != null)
+            {
+                try
+                {
+                    user.Tracks.Add(newTrack);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unable to add track. Exception: {ex}");
+                }
+                
+
+                
+            }
+            
         }
     }
 }

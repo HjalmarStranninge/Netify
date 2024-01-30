@@ -17,8 +17,8 @@ namespace NetifyClient.ApiModels.Dtos
         public string SpotifyTrackId { get; set; }
 
         [JsonPropertyName("artists")]
-        public ICollection<TrackArtistViewModel> Artists { get; set; }
-
+        public List<ArtistDto> Artists { get; set; }
+        [JsonPropertyName("userid")]
         public int UserId { get; set; }
     }
 }

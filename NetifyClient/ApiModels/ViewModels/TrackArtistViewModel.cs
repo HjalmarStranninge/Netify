@@ -5,5 +5,7 @@ namespace NetifyClient.ApiModels.ViewModels
     {
         [JsonPropertyName("name")]
         public string Name { get; set; }
+        [JsonPropertyName("id")]
+        public string SpotifyArtistId { get; set; }
     }
 }
