@@ -114,9 +114,9 @@ namespace NetifyAPI.Spotify
         }
 
         // Exactly the same as the Track search but for artists.
+
         public async Task<List<ArtistSearchViewModel>> SearchForArtists(string query, int offset)
         {
-
             var accessToken = await GetAccessToken();
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
@@ -136,8 +136,8 @@ namespace NetifyAPI.Spotify
                 {
                     ArtistName = artistDto.Name,
                     SpotifyArtistId = artistDto.SpotifyArtistId,
-                    Genres = artistDto.Genres
-        
+                    Genres = artistDto.Genres,
+                    Popularity = artistDto.Popularity
                 };
 
                 artistViewModels.Add(artistViewModel);
@@ -145,6 +145,8 @@ namespace NetifyAPI.Spotify
 
             return artistViewModels;
         }
+
+
         public async Task<double> SearchForDanceability(string trackId)
     {
         var accessToken = await GetAccessToken();
@@ -159,6 +161,19 @@ namespace NetifyAPI.Spotify
         // Extract the danceability value from the response and return it.
         return audioFeatures.Danceability;
     }
+        public async Task<int> GetArtistPopularity(string artistId)
+        {
+            var accessToken = await GetAccessToken();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await _httpClient.GetAsync($"https://api.spotify.com/v1/artists/{artistId}");
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+            var artistDetails = JsonSerializer.Deserialize<ArtistDetailsResponse>(responseBody);
+
+            return artistDetails.Popularity;
+        }
     }
 }
 
