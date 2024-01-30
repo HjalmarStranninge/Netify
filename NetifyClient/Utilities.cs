@@ -1,4 +1,5 @@
 ﻿
+using NetifyAPI.Models;
 using NetifyAPI.Models.Dtos.Tracks;
 using NetifyClient.ApiModels.ViewModels;
 using System;
@@ -486,10 +487,12 @@ namespace NetifyClient
         {
             Console.Write($"{track.Title}\n");
             Console.Write("By: ");
+   
             foreach (var artist in track.Artists)
             {
-                Console.Write($"{artist.Name} ");
+                Console.WriteLine($"{artist.Name} ");
             }
+            Console.Write($"Danceability: {track.Danceability}");
             Console.WriteLine();
         }
 
@@ -497,7 +500,7 @@ namespace NetifyClient
         public static void DisplayArtistInfo(ArtistSearchViewModel artist)
         {
             Console.Write($"{artist.ArtistName}\n");
-            Console.Write("Popularity: "); // Add popularity here.
+            Console.Write($"Popularity: {artist.Popularity}");
             
             Console.WriteLine();
         }

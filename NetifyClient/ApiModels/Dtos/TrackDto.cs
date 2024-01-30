@@ -20,5 +20,8 @@ namespace NetifyClient.ApiModels.Dtos
         public List<ArtistDto> Artists { get; set; }
         [JsonPropertyName("userid")]
         public int UserId { get; set; }
+
+        [JsonPropertyName("danceability")]
+        public double Danceability { get; set; }
     }
 }
