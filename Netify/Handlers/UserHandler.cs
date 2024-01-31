@@ -122,7 +122,7 @@ namespace NetifyAPI.Handlers
 
         public static IResult UserTracks(IUserRepository repository, int userId)
         {
-            User? user = repository.GetUser(userId);
+            User? user = repository.GetUserTracks(userId);
 
             if (user == null)
             {
@@ -133,7 +133,12 @@ namespace NetifyAPI.Handlers
                 .Select(a => new TrackViewModel()
                 {
                     Title = a.Title,
-                    
+                    Artists = a.Artists
+                    .Select(t => new TrackArtistViewModel()
+                    {
+                        Name = t.ArtistName
+                    })
+                    .ToList(),
                 })
                 .ToList();
 

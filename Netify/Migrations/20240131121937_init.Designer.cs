@@ -12,8 +12,8 @@ using NetifyAPI.Data;
 namespace NetifyAPI.Migrations
 {
     [DbContext(typeof(NetifyContext))]
-    [Migration("20240131120215_Init")]
-    partial class Init
+    [Migration("20240131121937_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -7,6 +7,6 @@ namespace NetifyAPI.Models.Viewmodels
         [JsonPropertyName("name")]
         public string Title { get; set; }
         [JsonPropertyName("artists")]
-        public virtual ICollection<Artist> Artists { get; set; }
+        public virtual ICollection<TrackArtistViewModel> Artists { get; set; }
     }
 }

@@ -114,7 +114,7 @@ namespace NetifyClient
                     {
                         foreach (var track in tracks)
                         {
-                            Console.WriteLine($"{track?.Title} by {string.Join(", ", track?.Artists?.Select(a => a?.ArtistName))}");
+                            Console.WriteLine($"{track.Title} by {string.Join(", ", track?.Artists?.Select(a => a?.Name))}");
                         }
                     }
                     else
