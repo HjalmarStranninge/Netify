@@ -1,7 +1,10 @@
-﻿namespace NetifyAPI.Models.Viewmodels
+﻿using System.Text.Json.Serialization;
+
+namespace NetifyAPI.Models.Viewmodels
 {
     public class ArtistViewModel
     {
-        public string ArtistName { get; set; }
+        [JsonPropertyName("name")]
+        public string? ArtistName { get; set; }
     }
 }

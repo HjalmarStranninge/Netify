@@ -15,7 +15,7 @@ namespace NetifyAPI.Repositories
         List<User> ListAllUsers();
 
         public void SaveTrack(string spotifyTrackId, string trackTitle, int userId, List<Artist> artists);
-        public void SaveArtist(string spotifyArtistId, string artistName, int userId, int popularity, List<string> genres);
+        public void SaveArtist(string spotifyArtistId, string artistName, int userId, int popularity, List<string> genres)
 
         void SaveUserToDatabase(UserDto userDto);
 

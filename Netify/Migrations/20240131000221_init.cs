@@ -4,7 +4,7 @@
 
 namespace NetifyAPI.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -88,7 +88,7 @@ namespace NetifyAPI.Migrations
                     SpotifyArtistId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ArtistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Popularity = table.Column<int>(type: "int", nullable: false),
-                    MainGenreGenreId = table.Column<int>(type: "int", nullable: false)
+                    MainGenreGenreId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -97,8 +97,7 @@ namespace NetifyAPI.Migrations
                         name: "FK_Artists_Genre_MainGenreGenreId",
                         column: x => x.MainGenreGenreId,
                         principalTable: "Genre",
-                        principalColumn: "GenreId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "GenreId");
                 });
 
             migrationBuilder.CreateTable(

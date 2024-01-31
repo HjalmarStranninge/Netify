@@ -12,8 +12,8 @@ using NetifyAPI.Data;
 namespace NetifyAPI.Migrations
 {
     [DbContext(typeof(NetifyContext))]
-    [Migration("20240130165652_Init")]
-    partial class Init
+    [Migration("20240131000221_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -66,7 +66,7 @@ namespace NetifyAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MainGenreGenreId")
+                    b.Property<int?>("MainGenreGenreId")
                         .HasColumnType("int");
 
                     b.Property<int>("Popularity")
@@ -195,9 +195,7 @@ namespace NetifyAPI.Migrations
                 {
                     b.HasOne("NetifyAPI.Models.Genre", "MainGenre")
                         .WithMany()
-                        .HasForeignKey("MainGenreGenreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MainGenreGenreId");
 
                     b.Navigation("MainGenre");
                 });

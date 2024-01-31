@@ -88,7 +88,7 @@ namespace NetifyAPI.Handlers
                     .Select(t => new TrackViewModel()
                     {
                         Title = t.Title,
-                        Artists = t.Artists 
+                        //Artists = t.Artists 
                     })
                     .Take(trackLimit)
                     .ToList(),
@@ -129,11 +129,11 @@ namespace NetifyAPI.Handlers
                 return Results.NotFound();
             }
 
-            List<TrackViewModel> trackList = user.Tracks
+            List<TrackViewModel>? trackList = user.Tracks
                 .Select(a => new TrackViewModel()
                 {
-                    Title =a.Title,
-                    Artists = a.Artists,
+                    Title = a.Title,
+                    
                 })
                 .ToList();
 

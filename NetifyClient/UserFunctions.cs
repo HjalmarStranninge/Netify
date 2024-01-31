@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using NetifyClient.ApiModels.ViewModels;
 using NetifyClient.ApiModels.Dtos;
+using NetifyAPI.Repositories;
 
 namespace NetifyClient
 {
@@ -19,7 +20,7 @@ namespace NetifyClient
                 "Search tracks",
                 "Your favorite artists",
                 "Your favorite tracks",
-                "Your favorite genres",               
+                "Your favorite genres",
                 "Log out"
             };
 
@@ -38,11 +39,11 @@ namespace NetifyClient
                     return true; 
 
                 case 2:
-                    // Show favorite artists.
+                    await ListArtists(userId, client);
                     return true;
 
                 case 3:
-                    // Show favorite tracks.
+                    await ListTracks(userId, client);
                     return true;
 
                 case 4:
@@ -56,7 +57,87 @@ namespace NetifyClient
                     return true;
 
             }
-        } 
+        }
+
+        //List favorite artists of user
+        public async static Task ListArtists(int userId, HttpClient client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"/user/{userId}/artists");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var artists = JsonSerializer.Deserialize<List<ArtistViewModel>>(content);
+
+                    Utilities.HeaderFooter();
+                    Console.WriteLine("Your favorite artists:");
+
+                    foreach (var artist in artists)
+                    {
+                        Console.WriteLine($"{artist.ArtistName}");
+                    }
+
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to list artists. Status code: {response.StatusCode}");
+                    Console.ReadLine();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during HTTP request: {ex.Message}");
+                Console.ReadLine();
+            }
+        }
+        // List favorite tracks of user
+        public async static Task ListTracks(int userId, HttpClient client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"/user/{userId}/tracks");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var tracks = JsonSerializer.Deserialize<List<TrackViewModel>>(content);
+
+                    Utilities.HeaderFooter();
+                    Console.WriteLine("Your favorite tracks:");
+
+                    // Check if tracks is not null before iterating
+                    if (tracks != null )
+                    {
+                        foreach (var track in tracks)
+                        {
+                            Console.WriteLine($"{track?.Title} by {string.Join(", ", track?.Artists?.Select(a => a?.ArtistName))}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No tracks found for the user.");
+                    }
+
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+                } else
+                {
+                    Console.WriteLine($"Failed to list tracks. Status code: {response.StatusCode}");
+                    Console.ReadLine();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during HTTP request: {ex.Message}");
+                Console.ReadLine();
+            }
+        }
+
 
         // Allows the user to search for a track and add it to their favorites, saving it to the database.
         public async static Task SearchTracks(int userId, HttpClient client)
