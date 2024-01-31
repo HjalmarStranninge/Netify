@@ -12,6 +12,7 @@ namespace NetifyAPI.Repositories
         // User
 
         User? GetUser(int userId);
+        User? GetUserTracks(int userId);
         List<User> ListAllUsers();
 
         public void SaveTrack(string spotifyTrackId, string trackTitle, int userId, List<Artist> artists);
@@ -44,6 +45,16 @@ namespace NetifyAPI.Repositories
                 .Include(u => u.Artists)
                 .Include(u => u.Tracks)
                 .SingleOrDefault();
+            return user;
+        }
+
+        public User? GetUserTracks(int userId)
+        {
+            User? user = _context.Users.
+               Where(u => u.UserId == userId)
+               .Include(u => u.Tracks)
+                   .ThenInclude(t => t.Artists)
+               .SingleOrDefault();
             return user;
         }
 
