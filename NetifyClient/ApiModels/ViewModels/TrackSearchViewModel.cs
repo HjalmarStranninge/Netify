@@ -15,5 +15,8 @@ namespace NetifyClient.ApiModels.ViewModels
 
         [JsonPropertyName("danceability")]
         public double Danceability { get; set; }
+
+        [JsonPropertyName("duration_ms")]
+        public double Duration { get; set; }
     }
 }

@@ -178,7 +178,8 @@ namespace NetifyClient
                         Title = trackSelected.Title,
                         SpotifyTrackId = trackSelected.SpotifyTrackId,
                         Artists = artists,
-                        UserId = userId
+                        UserId = userId,
+                        Duration = trackSelected.Duration
                     };
 
                     // Connects the track to the user if that option is selected.

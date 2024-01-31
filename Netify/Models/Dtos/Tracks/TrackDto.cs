@@ -19,5 +19,8 @@ namespace NetifyAPI.Models.Dtos.Tracks
 
         [JsonPropertyName("userid")]
         public int UserId { get; set; }
+
+        [JsonPropertyName("duration_ms")]
+        public double Duration { get; set; }
     }
 }

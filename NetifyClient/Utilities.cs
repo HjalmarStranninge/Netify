@@ -497,6 +497,7 @@ namespace NetifyClient
 
             }
             Console.WriteLine($"\nDanceability: {track.Danceability}%");
+            Console.WriteLine($"Duration: {TimeSpan.FromMilliseconds(track.Duration).ToString("mm\\:ss")}");
         }
 
         // Displays the full info for an artist.
