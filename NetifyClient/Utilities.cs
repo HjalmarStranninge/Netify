@@ -487,7 +487,7 @@ namespace NetifyClient
         // Displays the full info for a track.
         public static void DisplayTrackInfo(TrackSearchViewModel track)
         {
-            Console.WriteLine($"{track.Title}");
+            Console.WriteLine($"{track.Title}");           
             Console.Write("By: ");
    
             foreach (var artist in track.Artists)
@@ -496,8 +496,7 @@ namespace NetifyClient
                 Console.Write($"{artist.Name}  ");
 
             }
-            Console.Write($"Danceability: {track.Danceability}");
-            Console.WriteLine();
+            Console.WriteLine($"\nDanceability: {track.Danceability}%");
         }
 
         // Displays the full info for an artist.
