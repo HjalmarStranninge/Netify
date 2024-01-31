@@ -21,5 +21,6 @@ namespace NetifyAPI.Models
         public virtual ICollection<User> Users { get; set; }
 
       
+        public double Danceability { get; set; }
     }
 }
