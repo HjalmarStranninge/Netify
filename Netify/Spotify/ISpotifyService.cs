@@ -112,7 +112,8 @@ namespace NetifyAPI.Spotify
                     Title = trackDto.Title,
                     SpotifyTrackId = trackDto.SpotifyTrackId,
                     Artists = trackDto.Artists,
-                    Danceability = Math.Round(danceability * 100, 1)
+                    Danceability = Math.Round(danceability * 100, 1),
+                    Duration = trackDto.Duration,
                 };
 
                 trackViewModels.Add(trackViewModel);

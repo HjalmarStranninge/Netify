@@ -6,5 +6,8 @@ namespace NetifyAPI.Models.Dtos
     {
         [JsonPropertyName("danceability")]
         public double Danceability { get; set; }
+
+        [JsonPropertyName("duration_ms")]
+        public double Duration { get; set; }
     }
 }
