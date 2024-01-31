@@ -52,6 +52,21 @@ namespace NetifyAPI.Migrations
                     b.ToTable("ArtistUser");
                 });
 
+            modelBuilder.Entity("GenreUser", b =>
+                {
+                    b.Property<int>("GenresGenreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsersUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("GenresGenreId", "UsersUserId");
+
+                    b.HasIndex("UsersUserId");
+
+                    b.ToTable("GenreUser");
+                });
+
             modelBuilder.Entity("NetifyAPI.Models.Artist", b =>
                 {
                     b.Property<int>("ArtistId")
@@ -93,12 +108,7 @@ namespace NetifyAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("GenreId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Genre");
                 });
@@ -112,6 +122,9 @@ namespace NetifyAPI.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrackId"), 1L, 1);
 
                     b.Property<double>("Danceability")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Duration")
                         .HasColumnType("float");
 
                     b.Property<string>("SpotifySongId")
@@ -189,6 +202,21 @@ namespace NetifyAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("GenreUser", b =>
+                {
+                    b.HasOne("NetifyAPI.Models.Genre", null)
+                        .WithMany()
+                        .HasForeignKey("GenresGenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NetifyAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("NetifyAPI.Models.Artist", b =>
                 {
                     b.HasOne("NetifyAPI.Models.Genre", "MainGenre")
@@ -196,13 +224,6 @@ namespace NetifyAPI.Migrations
                         .HasForeignKey("MainGenreGenreId");
 
                     b.Navigation("MainGenre");
-                });
-
-            modelBuilder.Entity("NetifyAPI.Models.Genre", b =>
-                {
-                    b.HasOne("NetifyAPI.Models.User", null)
-                        .WithMany("Genres")
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("TrackUser", b =>
@@ -218,11 +239,6 @@ namespace NetifyAPI.Migrations
                         .HasForeignKey("UsersUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("NetifyAPI.Models.User", b =>
-                {
-                    b.Navigation("Genres");
                 });
 #pragma warning restore 612, 618
         }

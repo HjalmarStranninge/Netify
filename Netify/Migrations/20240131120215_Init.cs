@@ -4,10 +4,23 @@
 
 namespace NetifyAPI.Migrations
 {
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Genre",
+                columns: table => new
+                {
+                    GenreId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Genre", x => x.GenreId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Tracks",
                 columns: table => new
@@ -16,7 +29,8 @@ namespace NetifyAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SpotifySongId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Danceability = table.Column<double>(type: "float", nullable: false)
+                    Danceability = table.Column<double>(type: "float", nullable: false),
+                    Duration = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,22 +51,48 @@ namespace NetifyAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Genre",
+                name: "Artists",
                 columns: table => new
                 {
-                    GenreId = table.Column<int>(type: "int", nullable: false)
+                    ArtistId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    SpotifyArtistId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ArtistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Popularity = table.Column<int>(type: "int", nullable: false),
+                    MainGenreGenreId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Genre", x => x.GenreId);
+                    table.PrimaryKey("PK_Artists", x => x.ArtistId);
                     table.ForeignKey(
-                        name: "FK_Genre_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Artists_Genre_MainGenreGenreId",
+                        column: x => x.MainGenreGenreId,
+                        principalTable: "Genre",
+                        principalColumn: "GenreId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GenreUser",
+                columns: table => new
+                {
+                    GenresGenreId = table.Column<int>(type: "int", nullable: false),
+                    UsersUserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GenreUser", x => new { x.GenresGenreId, x.UsersUserId });
+                    table.ForeignKey(
+                        name: "FK_GenreUser_Genre_GenresGenreId",
+                        column: x => x.GenresGenreId,
+                        principalTable: "Genre",
+                        principalColumn: "GenreId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GenreUser_Users_UsersUserId",
+                        column: x => x.UsersUserId,
                         principalTable: "Users",
-                        principalColumn: "UserId");
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,27 +117,6 @@ namespace NetifyAPI.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Artists",
-                columns: table => new
-                {
-                    ArtistId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SpotifyArtistId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ArtistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Popularity = table.Column<int>(type: "int", nullable: false),
-                    MainGenreGenreId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Artists", x => x.ArtistId);
-                    table.ForeignKey(
-                        name: "FK_Artists_Genre_MainGenreGenreId",
-                        column: x => x.MainGenreGenreId,
-                        principalTable: "Genre",
-                        principalColumn: "GenreId");
                 });
 
             migrationBuilder.CreateTable(
@@ -164,9 +183,9 @@ namespace NetifyAPI.Migrations
                 column: "UsersUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Genre_UserId",
-                table: "Genre",
-                column: "UserId");
+                name: "IX_GenreUser_UsersUserId",
+                table: "GenreUser",
+                column: "UsersUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TrackUser_UsersUserId",
@@ -183,6 +202,9 @@ namespace NetifyAPI.Migrations
                 name: "ArtistUser");
 
             migrationBuilder.DropTable(
+                name: "GenreUser");
+
+            migrationBuilder.DropTable(
                 name: "TrackUser");
 
             migrationBuilder.DropTable(
@@ -192,10 +214,10 @@ namespace NetifyAPI.Migrations
                 name: "Tracks");
 
             migrationBuilder.DropTable(
-                name: "Genre");
+                name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Genre");
         }
     }
 }
