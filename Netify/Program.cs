@@ -37,7 +37,7 @@ namespace Netify
             app.MapGet("/user/{userId}", UserHandler.ViewUser); // Get a specific user
             app.MapGet("/user/search", UserHandler.SearchUsers); // Search users,"?query={name}"
 
-            //app.MapGet("/user/{userId}/genres", UserHandler.UserGenres); // Get a specfic user and their liked genres
+            app.MapGet("/user/{userId}/genres", UserHandler.UserGenres); // Get a specfic user and their liked genres
             app.MapGet("/user/{userId}/artists", UserHandler.UserArtists); // Get a specific user and their liked artists
             app.MapGet("/user/{userId}/tracks", UserHandler.UserTracks); // Get a specific user and their liked tracks
 
