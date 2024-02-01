@@ -47,7 +47,7 @@ namespace NetifyClient
                     return true;
 
                 case 4:
-                    // Show favorite genres.
+                    await ListGenres(userId, client);
                     return true;
                     
                 case 5:
@@ -216,6 +216,43 @@ namespace NetifyClient
                 Console.ReadLine();
             }
         }
+        // List favorite genres of user
+        public async static Task ListGenres(int userId, HttpClient client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"/user/{userId}/genres");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var genres = JsonSerializer.Deserialize<List<GenreViewModel>>(content);
+
+                    Utilities.HeaderFooter();
+                    Console.WriteLine("Your favorite genres:");
+
+                    foreach (var genre in genres)
+                    {
+                        Console.WriteLine($"{genre.Title}");
+                    }
+
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to list genres. Status code: {response.StatusCode}");
+                    Console.ReadLine();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during HTTP request: {ex.Message}");
+                Console.ReadLine();
+            }
+        }
+
         // Allows the user to search for a track and add it to their favorites, saving it to the database.
         public async static Task SearchArtist(int userId, HttpClient client)
         {

@@ -149,6 +149,29 @@ namespace NetifyAPI.Handlers
             return Results.Json(trackList);
         }
 
+        public static IResult UserGenres(IUserRepository repository, int userId)
+        {
+            User? user = repository.GetUser(userId);
+
+            if (user == null)
+            {
+                return Results.NotFound();
+            }
+
+            List<GenreViewModel> genreList = user.Genres
+                .Select(g => new GenreViewModel()
+                {
+                    Title = g.Name
+                })
+                .ToList();
+
+            if (genreList == null)
+            {
+                return Results.NotFound();
+            }
+            return Results.Json(genreList);
+        }
+
 
         public static IResult CreateNewUser(IUserRepository repository, UserDto userDto)
         {
