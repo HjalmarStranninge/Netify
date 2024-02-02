@@ -60,76 +60,64 @@ namespace NetifyClient
         }
 
         //List favorite artists of user
-        public async static Task ListArtists(int userId, HttpClient client)
+        public async static Task ListArtists(int userId, HttpClient client, int page = 1, int pageSize = 5)
         {
             try
             {
-                HttpResponseMessage response = await client.GetAsync($"/user/{userId}/artists");
-                if (response.IsSuccessStatusCode)
+                int selectedOption = 0;
+                ConsoleKeyInfo key;
+                List<ArtistViewModel> artists = null;
+
+                do
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    var artists = JsonSerializer.Deserialize<List<ArtistViewModel>>(content);
-
-                    Utilities.HeaderFooter();
-                    Console.WriteLine("Your favorite artists:");
-
-                    foreach (var artist in artists)
+                    HttpResponseMessage response = await client.GetAsync($"/user/{userId}/artists?page={page}&pageSize={pageSize}");
+                    if (response.IsSuccessStatusCode)
                     {
-                        Console.WriteLine($"{artist.ArtistName}");
-                    }
+                        var content = await response.Content.ReadAsStringAsync();
+                        artists = JsonSerializer.Deserialize<List<ArtistViewModel>>(content);
 
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
+                        Utilities.HeaderFooter();
+                        Console.WriteLine($"Your favorite artists:");
 
-                }
-                else
-                {
-                    Console.WriteLine($"Failed to list artists. Status code: {response.StatusCode}");
-                    Console.ReadLine();
-                }
+                        int startIndex = (page - 1) * pageSize;
+                        int endIndex = Math.Min(startIndex + pageSize, artists.Count);
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception during HTTP request: {ex.Message}");
-                Console.ReadLine();
-            }
-        }
-        // List favorite tracks of user
-        public async static Task ListTracks(int userId, HttpClient client)
-        {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync($"/user/{userId}/tracks");
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    var tracks = JsonSerializer.Deserialize<List<TrackViewModel>>(content);
-
-                    Utilities.HeaderFooter();
-                    Console.WriteLine("Your favorite tracks:");
-
-                    // Check if tracks is not null before iterating
-                    if (tracks != null )
-                    {
-                        foreach (var track in tracks)
+                        for (int i = startIndex; i < endIndex; i++)
                         {
-                            Console.WriteLine($"{track.Title} by {string.Join(", ", track?.Artists?.Select(a => a?.Name))}");
+                            Console.WriteLine($"{artists[i].ArtistName}");
+                        }
+                        Console.WriteLine("\nPress any key to continue...");
+                        key = Console.ReadKey();
+
+                        switch (key.Key)
+                        {
+                            case ConsoleKey.LeftArrow:
+                                if (page > 1)
+                                {
+                                    page--;
+                                    selectedOption = 0;
+                                }
+                                break;
+
+                            case ConsoleKey.RightArrow:
+                                {
+                                    // Increment the page number only if there are more pages available
+                                    if ((page + 1) <= (artists.Count / pageSize + 1))
+                                    {
+                                        page++;
+                                        selectedOption = 0;
+                                    }
+                                }
+                                break;
                         }
                     }
                     else
                     {
-                        Console.WriteLine("No tracks found for the user.");
+                        Console.WriteLine($"Failed to list artists. Status code: {response.StatusCode}");
+                        Console.ReadLine();
+                        key = new ConsoleKeyInfo();
                     }
-
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-                } else
-                {
-                    Console.WriteLine($"Failed to list tracks. Status code: {response.StatusCode}");
-                    Console.ReadLine();
-                }
-
+                } while (key.Key != ConsoleKey.Enter && artists != null);
             }
             catch (Exception ex)
             {
@@ -138,35 +126,75 @@ namespace NetifyClient
             }
         }
 
-        // List favorite genres of user
-        public async static Task ListGenres(int userId, HttpClient client)
+
+        // List favorite tracks of user
+        public async static Task ListTracks(int userId, HttpClient client, int page = 1, int pageSize = 5)
         {
             try
             {
-                HttpResponseMessage response = await client.GetAsync($"/user/{userId}/genres");
-                if (response.IsSuccessStatusCode)
+                int selectedOption = 0;
+                ConsoleKeyInfo key;
+                List<TrackViewModel> tracks = null;
+
+                do
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    var genres = JsonSerializer.Deserialize<List<GenreViewModel>>(content);
-
-                    Utilities.HeaderFooter();
-                    Console.WriteLine("Your favorite genres:");
-
-                    foreach (var genre in genres)
+                    HttpResponseMessage response = await client.GetAsync($"/user/{userId}/tracks?page={page}&pageSize={pageSize}");
+                    if (response.IsSuccessStatusCode)
                     {
-                        Console.WriteLine($"{genre.Title}");
+                        var content = await response.Content.ReadAsStringAsync();
+                        tracks = JsonSerializer.Deserialize<List<TrackViewModel>>(content);
+
+                        Utilities.HeaderFooter();
+                        Console.WriteLine("Your favorite tracks:");
+
+                        int startIndex = (page - 1) * pageSize;
+                        int endIndex = Math.Min(startIndex + pageSize, tracks.Count);
+
+                        // Check if tracks is not null before iterating
+                        if (tracks != null)
+                        {
+                            for (int i = startIndex; i < endIndex; i++)
+                            {
+                                Console.WriteLine($"{tracks[i].Title} by {string.Join(", ", tracks[i]?.Artists?.Select(a => a?.Name))}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("No tracks found for the user.");
+                        }
+
+                        Console.WriteLine("\nPress any key to continue...");
+                        key =Console.ReadKey();
+
+                        switch (key.Key)
+                        {
+                            case ConsoleKey.LeftArrow:
+                                if (page > 1)
+                                {
+                                    page--;
+                                    selectedOption = 0;
+                                }
+                                break;
+
+                            case ConsoleKey.RightArrow:
+                                {
+                                    // Increment the page number only if there are more pages available
+                                    if ((page + 1) <= (tracks.Count / pageSize + 1))
+                                    {
+                                        page++;
+                                        selectedOption = 0;
+                                    }
+                                }
+                                break;
+                        }
                     }
-
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-
-                }
-                else
-                {
-                    Console.WriteLine($"Failed to list genres. Status code: {response.StatusCode}");
-                    Console.ReadLine();
-                }
-
+                    else
+                    {
+                        Console.WriteLine($"Failed to list tracks. Status code: {response.StatusCode}");
+                        Console.ReadLine();
+                        key = new ConsoleKeyInfo();
+                    }
+                } while (key.Key != ConsoleKey.Enter && tracks != null);
             }
             catch (Exception ex)
             {
@@ -174,6 +202,76 @@ namespace NetifyClient
                 Console.ReadLine();
             }
         }
+
+
+        // List favorite genres of user
+        public async static Task ListGenres(int userId, HttpClient client, int page = 1, int pageSize = 5)
+        {
+            try
+            {
+                int selectedOption = 0;
+                ConsoleKeyInfo key;
+                List<GenreViewModel> genres = null;
+
+                do
+                {
+                    HttpResponseMessage response = await client.GetAsync($"/user/{userId}/genres?page={page}&pageSize={pageSize}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        genres = JsonSerializer.Deserialize<List<GenreViewModel>>(content);
+
+                        Utilities.HeaderFooter();
+                        Console.WriteLine("Your favorite genres:");
+
+                        int startIndex = (page - 1) * pageSize;
+                        int endIndex = Math.Min(startIndex + pageSize, genres.Count);
+
+                        foreach (var genre in genres.GetRange(startIndex, endIndex - startIndex))
+                        {
+                            Console.WriteLine($"{genre.Title}");
+                        }
+
+                        Console.WriteLine("\nPress any key to continue...");
+                        key = Console.ReadKey();
+
+                        switch (key.Key)
+                        {
+                            case ConsoleKey.LeftArrow:
+                                if (page > 1)
+                                {
+                                    page--;
+                                    selectedOption = 0;
+                                }
+                                break;
+
+                            case ConsoleKey.RightArrow:
+                                {
+                                    // Increment the page number only if there are more pages available
+                                    if ((page + 1) <= (genres.Count / pageSize + 1))
+                                    {
+                                        page++;
+                                        selectedOption = 0;
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Failed to list genres. Status code: {response.StatusCode}");
+                        Console.ReadLine();
+                        key = new ConsoleKeyInfo();
+                    }
+                } while (key.Key != ConsoleKey.Enter && genres != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during HTTP request: {ex.Message}");
+                Console.ReadLine();
+            }
+        }
+
 
         // Allows the user to search for a track and add it to their favorites, saving it to the database.
         public async static Task SearchTracks(int userId, HttpClient client)

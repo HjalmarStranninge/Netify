@@ -130,15 +130,15 @@ namespace NetifyAPI.Handlers
             }
 
             List<TrackViewModel>? trackList = user.Tracks
-                .Select(a => new TrackViewModel()
+                .Select(t => new TrackViewModel()
                 {
-                    Title = a.Title,
-                    Artists = a.Artists
-                    .Select(t => new TrackArtistViewModel()
-                    {
-                        Name = t.ArtistName
-                    })
-                    .ToList(),
+                    Title = t.Title, 
+                    Artists = t.Artists
+                        .Select(a => new TrackArtistViewModel()
+                        {
+                            Name = a.ArtistName 
+                        })
+                        .ToList(),
                 })
                 .ToList();
 
