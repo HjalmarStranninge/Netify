@@ -39,7 +39,10 @@ Welcome to the Netify Api. This projects involves creating a minimal API around 
 - /user/{userId}/genre/{genreId} - **Link a Specific User to a Genre**
 - /user/{userId}/artist/{artistId} - **Link a Specific User and Artist**
 - /user/{userId}/tracks/{trackId} - **Link a Specific User and Track**
-      
+
+## ER model
+![ER model Netify](https://github.com/HjalmarStranninge/Netify/assets/123236297/f284a0fd-26e8-426b-b178-a062b7e8e74c)
+ 
 ## Getting Started
 1. Clone the project.
 2. Open it in your development environment.
