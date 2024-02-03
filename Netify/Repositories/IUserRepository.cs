@@ -19,9 +19,6 @@ namespace NetifyAPI.Repositories
         public void SaveArtist(string spotifyArtistId, string artistName, int userId, int popularity, List<string> genres);
 
         void SaveUserToDatabase(UserDto userDto);
-
-
-
     }
 
     public class DbUserHandlerRepository : IUserRepository
@@ -150,12 +147,6 @@ namespace NetifyAPI.Repositories
         }
 
         // Saves a selected track to the database and connects to an user. Also saves the artists if they aren't already saved.
-        public void SaveArtist(string spotifyArtistId, int userId, string artistName, int popularity, List<string> genres)
-        {
-
-            
-        }
-
         public void SaveArtist(string spotifyArtistId, string artistName, int userId, int popularity, List<string> genres)
         {
             Artist newArtist = _context.Artists.FirstOrDefault(a => a.SpotifyArtistId == spotifyArtistId);
