@@ -162,7 +162,7 @@ namespace NetifyClient
                         {
                             Console.WriteLine("No tracks found for the user.");
                         }
-
+                        Console.WriteLine("\nUse left and right arrow keys to switch pages.");
                         Console.WriteLine("\nPress any key to continue...");
                         key =Console.ReadKey();
 
