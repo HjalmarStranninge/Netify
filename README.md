@@ -46,6 +46,7 @@ Welcome to the Netify Api. This projects involves creating a minimal API around 
 ![ER model Netify](https://github.com/HjalmarStranninge/Netify/assets/123236297/f284a0fd-26e8-426b-b178-a062b7e8e74c)
  
 ## Insomnia
+### GET requests
 - https://localhost:0000/users - All users
 
 ![Skärmbild 2024-02-04 160723](https://github.com/HjalmarStranninge/Netify/assets/146171251/61bdf3b3-e0de-4a97-8ebb-aa21ab5de1df)
@@ -65,6 +66,14 @@ Welcome to the Netify Api. This projects involves creating a minimal API around 
 - https://localhost:0000/user/{userId}/tracks" - Get a specific user and tracks
 
 ![Skärmbild 2024-02-04 161259](https://github.com/HjalmarStranninge/Netify/assets/146171251/4c1ef84b-a309-476e-ae81-c8bda00bf090)
+
+### Post requests
+
+https://localhost:7105/users - Add a new user
+
+![Skärmbild 2024-02-04 163056](https://github.com/HjalmarStranninge/Netify/assets/146171251/40648a48-ae42-4f92-8787-4ea32c7b9f38)
+
+
 
 ## Getting Started
 1. Clone the project.
