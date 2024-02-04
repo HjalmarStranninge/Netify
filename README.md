@@ -7,6 +7,7 @@ Welcome to the Netify Api. This projects involves creating a minimal API around 
 - [Features](#key-features)
 - [Functionality](#functionality-highlights)
 - [Using Endpoints](#using-endpoints)
+- [ER Model](#er-model)
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
 - [Api Reference](#api-reference)
