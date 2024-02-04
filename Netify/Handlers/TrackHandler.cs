@@ -27,14 +27,11 @@ namespace NetifyAPI.Handlers
         // Unpacks the track dto and calls the repository method to save the track to the database.
         public static async Task<IResult> SaveTrack(TrackDto track, IUserRepository repository)
         {
-            string spotifyTrackId = track.SpotifyTrackId;
-            string trackTitle = track.Title;
-            int userId = track.UserId;
-            List<Artist> artists = track.Artists.ToList();
-
+            User user = repository.GetUserFromDatabase(track.UserId);
             try
             {
-                repository.SaveTrack(spotifyTrackId, trackTitle, userId, artists);
+                repository.SaveTrackToDatabase(track);
+                repository.SaveTrackToUser(track.SpotifyTrackId, user);
                 return Results.StatusCode((int)HttpStatusCode.Created);
             }
             catch (Exception ex)

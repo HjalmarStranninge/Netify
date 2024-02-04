@@ -2,6 +2,7 @@
 using NetifyAPI.Spotify;
 using System.Net;
 using NetifyAPI.Models.Dtos.Artists;
+using NetifyAPI.Models;
 
 namespace NetifyAPI.Handlers
 {
@@ -20,18 +21,17 @@ namespace NetifyAPI.Handlers
             return Results.Json(artists);
         }
 
-        // Unpacks the track dto and calls the repository method to save the track to the database.
+        // Unpacks the artist dto and calls the repository method to save the artist to the database and user.
+        // Also adds genre to user
         public static async Task<IResult> SaveArtist(ArtistDto artist, IUserRepository repository)
         {
-            string spotifyArtistId = artist.SpotifyArtistId;
-            string artistName = artist.Name;
-            int popularity = artist.Popularity;
-            int userId = artist.UserId;
-            List<string> genres = artist.Genres.ToList();
+            User user = repository.GetUserFromDatabase(artist.UserId);
 
             try
             {
-                repository.SaveArtist(spotifyArtistId, artistName, userId, popularity, genres);
+                repository.SaveArtistToDatabase(artist);
+                repository.SaveArtistToUser(artist.SpotifyArtistId, user);
+                repository.SaveArtistGenreToUser(artist.SpotifyArtistId, user);
                 return Results.StatusCode((int)HttpStatusCode.Created);
             }
             catch (Exception ex)

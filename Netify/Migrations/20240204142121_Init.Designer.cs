@@ -12,8 +12,8 @@ using NetifyAPI.Data;
 namespace NetifyAPI.Migrations
 {
     [DbContext(typeof(NetifyContext))]
-    [Migration("20240203232901_init")]
-    partial class init
+    [Migration("20240204142121_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -84,7 +84,7 @@ namespace NetifyAPI.Migrations
                     b.Property<int?>("MainGenreGenreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Popularity")
+                    b.Property<int?>("Popularity")
                         .HasColumnType("int");
 
                     b.Property<string>("SpotifyArtistId")

@@ -2,20 +2,25 @@
 using NetifyAPI.Data;
 using NetifyAPI.Models;
 using NetifyAPI.Models.Dtos;
+using NetifyAPI.Models.Dtos.Artists;
+using NetifyAPI.Models.Dtos.Tracks;
 
 namespace NetifyAPI.Repositories
 {
     public interface IUserRepository
     {
-        // User
         List<User> ListAllUsers();
-        User? GetUser(int userId);
-        User? GetUserGenres(int userId);
-        User? GetUserArtists(int userId);
-        User? GetUserTracks(int userId);
+        User? GetUserFromDatabase(int userId);
+        User? GetUserFavoriteGenres(int userId);
+        User? GetUserFavoriteArtists(int userId);
+        User? GetUserFavoriteTracks(int userId);
+        Artist GetArtistFromDatabase(string spotifyArtistId);
 
-        public void SaveTrack(string spotifyTrackId, string trackTitle, int userId, List<Artist> artists);
-        public void SaveArtist(string spotifyArtistId, string artistName, int userId, int popularity, List<string> genres);
+        public void SaveTrackToDatabase(TrackDto track);
+        public void SaveTrackToUser(string spotifyTrackId, User user);
+        public void SaveArtistToDatabase(ArtistDto artist);
+        public void SaveArtistToUser(string spotifyArtistId, User user);
+        public void SaveArtistGenreToUser(string spotifyArtistId, User user);
 
         void SaveUserToDatabase(UserDto userDto);
     }
@@ -34,7 +39,7 @@ namespace NetifyAPI.Repositories
         }
 
         // Retrieves user with all connected favorites
-        public User? GetUser(int userId)
+        public User? GetUserFromDatabase(int userId)
         {
             User? user = _context.Users.
                 Where(u => u.UserId == userId)
@@ -47,7 +52,7 @@ namespace NetifyAPI.Repositories
         }
 
         // Retrieves user with only favorited genres (isolated to only genres to not fetch unecessary data)
-        public User? GetUserGenres(int userId) 
+        public User? GetUserFavoriteGenres(int userId)
         {
             User? user = _context.Users.
                Where(u => u.UserId == userId)
@@ -56,7 +61,7 @@ namespace NetifyAPI.Repositories
             return user;
         }
         // Retrieves user with only favorited artists (isolated to only artists to not fetch unecessary data)
-        public User? GetUserArtists(int userId)
+        public User? GetUserFavoriteArtists(int userId)
         {
             User? user = _context.Users.
                Where(u => u.UserId == userId)
@@ -65,7 +70,7 @@ namespace NetifyAPI.Repositories
             return user;
         }
         // Retrieves user with only favorited tracks and the artists associated with it (isolated to only tracks to not fetch unecessary data)
-        public User? GetUserTracks(int userId)
+        public User? GetUserFavoriteTracks(int userId)
         {
             User? user = _context.Users.
                Where(u => u.UserId == userId)
@@ -73,6 +78,15 @@ namespace NetifyAPI.Repositories
                    .ThenInclude(t => t.Artists)
                .SingleOrDefault();
             return user;
+        }
+
+        public Artist GetArtistFromDatabase(string spotifyArtistId)
+        {
+            Artist artist = _context.Artists
+            .Where(u => u.SpotifyArtistId == spotifyArtistId)
+            .SingleOrDefault();
+
+            return artist;
         }
 
         // Checks if user with username exists in db, if no saves new user to db. If yes, throws exception
@@ -93,47 +107,29 @@ namespace NetifyAPI.Repositories
         }
 
         // Saves a selected track to the database and connects to an user. Also saves the artists if they aren't already saved.
-        public void SaveTrack(string spotifyTrackId, string trackTitle, int userId, List<Artist> artists)
+        public void SaveTrackToDatabase(TrackDto track)
         {
             // Iterates through the list of artists and adds each one to the database if they don't already exist.
-            foreach (var artist in artists)
+            foreach (var artist in track.Artists)
             {
-                Artist existingArtist = _context.Artists.FirstOrDefault(a => a.SpotifyArtistId == artist.SpotifyArtistId);
-
-                if (existingArtist == null)
-                {
-                    try
-                    {
-                        existingArtist = new Artist
-                        {
-                            SpotifyArtistId = artist.SpotifyArtistId,
-                            ArtistName = artist.ArtistName
-                        };
-
-                        _context.Artists.Add(existingArtist);
-                        _context.SaveChanges();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Couldn't save artist to database. Exception: {ex}");
-                    }
-                }
+                SaveArtistToDatabase(artist);
             }
 
             // Checks if the track already exists in the database, if not, it is added.
             Track newTrack;
 
-            if (_context.Tracks.Any(t => t.SpotifySongId == spotifyTrackId))
+            if (_context.Tracks.Any(t => t.SpotifySongId == track.SpotifyTrackId))
             {
-                newTrack = _context.Tracks.Include(t => t.Artists).Where(t => t.SpotifySongId == spotifyTrackId).Single();
+                newTrack = _context.Tracks.Include(t => t.Artists).Where(t => t.SpotifySongId == track.SpotifyTrackId).Single();
             }
             else
             {
                 newTrack = new Track
                 {
-                    SpotifySongId = spotifyTrackId,
-                    Title = trackTitle,
-                    Artists = artists.Select(a => _context.Artists.Single(existingArtist => existingArtist.SpotifyArtistId == a.SpotifyArtistId)).ToList()
+                    SpotifySongId = track.SpotifyTrackId,
+                    Title = track.Title,
+                    Danceability = track.Danceability,
+                    Artists = track.Artists.Select(a => _context.Artists.Single(existingArtist => existingArtist.SpotifyArtistId == a.SpotifyArtistId)).ToList()
                 };
 
                 try
@@ -146,43 +142,48 @@ namespace NetifyAPI.Repositories
                     Console.WriteLine($"Couldn't save track to database. Exception: {ex}");
                 }
             }
+        }
 
-            // Selects the current user and connects the selected tracks in the database, given that the track isn't already connected.
-            var user = _context.Users
-                .Where(u => u.UserId == userId)
-                .Include(u => u.Tracks)
+        public void SaveTrackToUser(string spotifyTrackId, User user)
+        {
+            Track favoriteTrack = _context.Tracks
+                .Where(t => t.SpotifySongId == spotifyTrackId)
                 .SingleOrDefault();
-
-            if (user != null && !user.Tracks.Contains(newTrack))
+            if (user != null && !user.Tracks.Any(ut => ut.SpotifySongId == spotifyTrackId))
             {
                 try
                 {
-                    user.Tracks?.Add(newTrack);
+                    user.Tracks?.Add(favoriteTrack);
                     _context.SaveChanges();
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Unable to add track. Exception: {ex}");
+                    Console.WriteLine($"Unable to add track to favorites. Exception: {ex}");
                 }
             }
         }
 
-        // Saves a selected track to the database and connects to an user. Also saves the artists if they aren't already saved.
-        public void SaveArtist(string spotifyArtistId, string artistName, int userId, int popularity, List<string> genres)
+        // Saves an artist to the database.
+        public void SaveArtistToDatabase(ArtistDto artist)
         {
-            Artist newArtist = _context.Artists.FirstOrDefault(a => a.SpotifyArtistId == spotifyArtistId);
-            Genre genre = new Genre();
-            genre.Name = genres.FirstOrDefault();
+            Genre genre = null;
+            if (artist.Genres != null)
+            {
+                genre = new Genre()
+                {
+                    Name = artist.Genres.FirstOrDefault()
+                };
+            }
 
-            if (newArtist == null)
+            if (!_context.Artists.Any(a => a.SpotifyArtistId == artist.SpotifyArtistId))
             {
                 try
                 {
-                    newArtist = new Artist
+                    Artist newArtist = new Artist
                     {
-                        SpotifyArtistId = spotifyArtistId,
-                        ArtistName = artistName,
-                        Popularity = popularity,
+                        SpotifyArtistId = artist.SpotifyArtistId,
+                        ArtistName = artist.Name,
+                        Popularity = artist.Popularity,
                         MainGenre = genre
                     };
 
@@ -191,41 +192,51 @@ namespace NetifyAPI.Repositories
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Couldn't save artist to database. Exception: {ex}");
+                    Console.WriteLine($"Unable to save artist to database. Exception: {ex}");
                 }
             }
 
             // Selects the current user and connects the selected tracks in the database, given that the artist isn't already connected.
             var user = _context.Users
-                .Where(u => u.UserId == userId)
+                .Where(u => u.UserId == artist.UserId)
                 .Include(u => u.Artists)
                 .Include(u => u.Genres)
                 .SingleOrDefault();
+        }
 
-            // Adds the main genre of the artists to the users favorites (only if genre is not already connected to user).
-            if (user != null && !user.Genres.Any(ug => ug.Name == genre.Name))
+        public void SaveArtistToUser(string spotifyArtistId, User user)
+        {
+            Artist chosenArtist = GetArtistFromDatabase(spotifyArtistId);
+
+            if (user != null && !user.Artists.Any(a => a.SpotifyArtistId == spotifyArtistId))
             {
                 try
                 {
-                    user.Genres.Add(genre);
+                    user.Artists?.Add(chosenArtist);
+                    _context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unable to add artist to favorites. Exception: {ex}");
+                }
+            }
+        }
+
+        public void SaveArtistGenreToUser(string spotifyArtistId, User user)
+        {
+            Artist favoriteArtist = GetArtistFromDatabase(spotifyArtistId);
+
+            // Adds the main genre of the artists to the users favorites (only if genre is not already connected to user).
+            if (user != null && !user.Genres.Any(ug => ug.Name == favoriteArtist.MainGenre.Name))
+            {
+                try
+                {
+                    user.Genres.Add(favoriteArtist.MainGenre);
                     _context.SaveChanges();
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Unable to save genre. Exception: {ex}");
-                }
-            }
-
-            if (user != null && !user.Artists.Contains(newArtist))
-            {
-                try
-                {
-                    user.Artists?.Add(newArtist);
-                    _context.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Unable to add artist. Exception: {ex}");
                 }
             }
         }

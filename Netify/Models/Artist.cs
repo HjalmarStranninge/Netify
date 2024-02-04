@@ -12,11 +12,9 @@ namespace NetifyAPI.Models
         [JsonPropertyName("name")]
         public string ArtistName { get; set; }
         [JsonPropertyName("popularity")]
-        public int Popularity { get; set; }
-
+        public int? Popularity { get; set; }
 
         public Genre? MainGenre { get; set; }
-
 
         public virtual ICollection<Track> Tracks { get; set; }
 

@@ -82,7 +82,7 @@ namespace NetifyAPI.Migrations
                     b.Property<int?>("MainGenreGenreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Popularity")
+                    b.Property<int?>("Popularity")
                         .HasColumnType("int");
 
                     b.Property<string>("SpotifyArtistId")
