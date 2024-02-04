@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using NetifyClient.ApiModels.ViewModels;
 using NetifyClient.ApiModels.Dtos;
-using NetifyAPI.Repositories;
 
 namespace NetifyClient
 {
+    // User menu options
     public class UserFunctions
     { 
         public static async Task<bool> UserMenu(int userId, HttpClient client)
@@ -126,7 +122,6 @@ namespace NetifyClient
             }
         }
 
-
         // List favorite tracks of user
         public async static Task ListTracks(int userId, HttpClient client, int page = 1, int pageSize = 5)
         {
@@ -203,7 +198,6 @@ namespace NetifyClient
             }
         }
 
-
         // List favorite genres of user
         public async static Task ListGenres(int userId, HttpClient client, int page = 1, int pageSize = 5)
         {
@@ -271,7 +265,6 @@ namespace NetifyClient
                 Console.ReadLine();
             }
         }
-
 
         // Allows the user to search for a track and add it to their favorites, saving it to the database.
         public async static Task SearchTracks(int userId, HttpClient client)
@@ -351,7 +344,6 @@ namespace NetifyClient
             }
         }
 
-
         // Allows the user to search for a track and add it to their favorites, saving it to the database.
         public async static Task SearchArtist(int userId, HttpClient client)
         {
@@ -368,9 +360,6 @@ namespace NetifyClient
 
                     var content = await response.Content.ReadAsStringAsync();
                     var artists = JsonSerializer.Deserialize<List<ArtistSearchViewModel>>(content);
-
-                    
-
                     var artistSelected = await Utilities.ArtistSelection(artists, client, trackQuery);            
                    
                     var artistDto = new ArtistDto
@@ -380,7 +369,6 @@ namespace NetifyClient
                         Popularity = artistSelected.Popularity,
                         SpotifyArtistId = artistSelected.SpotifyArtistId,
                         UserId = userId
-                        
                     };
 
                     // Connects the track to the user if that option is selected.

@@ -1,6 +1,4 @@
-﻿using NetifyClient.ApiModels.Dtos;
-using System.Text.Json.Serialization;
-
+﻿using System.Text.Json.Serialization;
 
 namespace NetifyClient.ApiModels.ViewModels
 {

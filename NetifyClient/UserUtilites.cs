@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NetifyClient.ApiModels.Dtos;
+﻿using NetifyClient.ApiModels.Dtos;
 
 namespace NetifyClient
 {
     internal class UserUtilites
     {
+        // Method for creating new user
         public static UserDto CreateUser()
         {
             Utilities.HeaderFooter();
@@ -27,6 +23,8 @@ namespace NetifyClient
 
             return newUser;
         }
+
+        // Success/Error message for creation of user below
 
         public static void CreateUserSuccess()
         {
