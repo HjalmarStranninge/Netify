@@ -4,7 +4,7 @@
 
 namespace NetifyAPI.Migrations
 {
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,7 +58,7 @@ namespace NetifyAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SpotifyArtistId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ArtistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Popularity = table.Column<int>(type: "int", nullable: false),
+                    Popularity = table.Column<int>(type: "int", nullable: true),
                     MainGenreGenreId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>

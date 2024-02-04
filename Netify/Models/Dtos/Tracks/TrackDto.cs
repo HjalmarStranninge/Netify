@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using NetifyAPI.Models.Dtos.Artists;
 
 namespace NetifyAPI.Models.Dtos.Tracks
 {
@@ -11,7 +12,7 @@ namespace NetifyAPI.Models.Dtos.Tracks
         public string SpotifyTrackId { get; set; }
 
         [JsonPropertyName("artists")]
-        public ICollection<Artist> Artists { get; set; }
+        public ICollection<ArtistDto> Artists { get; set; }
 
         [JsonPropertyName("danceability")]
         public double Danceability { get; set; }

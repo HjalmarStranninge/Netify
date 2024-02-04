@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using NetifyAPI.Models.Dtos.Artists;
 
 namespace NetifyAPI.Models.Viewmodels
 {
@@ -10,7 +11,7 @@ namespace NetifyAPI.Models.Viewmodels
         public string Title { get; set; }
 
         [JsonPropertyName("artists")]
-        public ICollection<Artist> Artists { get; set; }
+        public ICollection<ArtistDto> Artists { get; set; }
 
         public double Danceability { get; set; }
 

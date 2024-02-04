@@ -9,7 +9,7 @@ namespace NetifyAPI.Models.Viewmodels
         [JsonPropertyName("name")]
         public string ArtistName { get; set; }
         [JsonPropertyName("popularity")]
-        public int Popularity { get; set; }
+        public int? Popularity { get; set; }
 
         [JsonPropertyName ("genres")]
         public ICollection<string> Genres { get; set; }
