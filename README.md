@@ -45,6 +45,9 @@ Welcome to the Netify Api. This projects involves creating a minimal API around 
 ## ER model
 ![ER model Netify](https://github.com/HjalmarStranninge/Netify/assets/123236297/f284a0fd-26e8-426b-b178-a062b7e8e74c)
  
+## UML diagram API
+![UML diagram Netify](https://github.com/HjalmarStranninge/Netify/assets/123236297/a7dde2fe-195e-43bf-ba02-eed84cdea461)
+
 ## Insomnia
 ### GET requests
 - https://localhost:0000/users - All users
