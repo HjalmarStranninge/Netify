@@ -35,15 +35,15 @@ namespace NetifyClient
                     return true; 
 
                 case 2:
-                    await ListArtists(userId, client);
+                    await ListUserFavoriteArtists(userId, client);
                     return true;
 
                 case 3:
-                    await ListTracks(userId, client);
+                    await ListUserFavoriteTracks(userId, client);
                     return true;
 
                 case 4:
-                    await ListGenres(userId, client);
+                    await ListUserFavoriteGenres(userId, client);
                     return true;
                     
                 case 5:
@@ -56,7 +56,7 @@ namespace NetifyClient
         }
 
         //List favorite artists of user
-        public async static Task ListArtists(int userId, HttpClient client, int page = 1, int pageSize = 5)
+        public async static Task ListUserFavoriteArtists(int userId, HttpClient client, int page = 1, int pageSize = 5)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace NetifyClient
         }
 
         // List favorite tracks of user
-        public async static Task ListTracks(int userId, HttpClient client, int page = 1, int pageSize = 5)
+        public async static Task ListUserFavoriteTracks(int userId, HttpClient client, int page = 1, int pageSize = 5)
         {
             try
             {
@@ -199,7 +199,7 @@ namespace NetifyClient
         }
 
         // List favorite genres of user
-        public async static Task ListGenres(int userId, HttpClient client, int page = 1, int pageSize = 5)
+        public async static Task ListUserFavoriteGenres(int userId, HttpClient client, int page = 1, int pageSize = 5)
         {
             try
             {
@@ -344,7 +344,7 @@ namespace NetifyClient
             }
         }
 
-        // Allows the user to search for a track and add it to their favorites, saving it to the database.
+        // Allows the user to search for an artist and add it to their favorites, saving it to the database.
         public async static Task SearchArtist(int userId, HttpClient client)
         {
             Utilities.HeaderFooter();

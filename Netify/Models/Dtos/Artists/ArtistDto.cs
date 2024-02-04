@@ -18,7 +18,5 @@ namespace NetifyAPI.Models.Dtos.Artists
 
         [JsonPropertyName("userid")]
         public int UserId { get; set; }
-
-
     }
 }

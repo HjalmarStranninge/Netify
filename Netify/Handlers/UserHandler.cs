@@ -93,7 +93,7 @@ namespace NetifyAPI.Handlers
         // Lists all favorited genres of a user
         public static IResult UserGenres(IUserRepository repository, int userId)
         {
-            User? user = repository.GetUserFavoriteGenres(userId);
+            User? user = repository.GetUserForFavoriteGenres(userId);
 
             if (user == null)
             {
@@ -116,7 +116,7 @@ namespace NetifyAPI.Handlers
         // Lists all favorited artists of a user
         public static IResult UserArtists(IUserRepository repository, int userId)
         {
-            User? user = repository.GetUserFavoriteArtists(userId);
+            User? user = repository.GetUserForFavoriteArtists(userId);
 
             if (user == null)
             {
@@ -139,7 +139,7 @@ namespace NetifyAPI.Handlers
         // Lists all favorited tracks of a user
         public static IResult UserTracks(IUserRepository repository, int userId)
         {
-            User? user = repository.GetUserFavoriteTracks(userId);
+            User? user = repository.GetUserForFavoriteTracks(userId);
 
             if (user == null)
             {
