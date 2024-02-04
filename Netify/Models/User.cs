@@ -1,7 +1,4 @@
-﻿
-using NetifyAPI.Models.Viewmodels;
-
-namespace NetifyAPI.Models
+﻿namespace NetifyAPI.Models
 {
     public class User
     {

@@ -1,6 +1,4 @@
-﻿using NetifyAPI.Models.Dtos.Tracks;
-using NetifyAPI.Models;
-using NetifyAPI.Repositories;
+﻿using NetifyAPI.Repositories;
 using NetifyAPI.Spotify;
 using System.Net;
 using NetifyAPI.Models.Dtos.Artists;

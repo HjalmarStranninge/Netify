@@ -1,19 +1,18 @@
-﻿using System.Xml.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NetifyAPI.Data;
 using NetifyAPI.Models;
 using NetifyAPI.Models.Dtos;
-using NetifyAPI.Models.Viewmodels;
 
 namespace NetifyAPI.Repositories
 {
     public interface IUserRepository
     {
         // User
-
-        User? GetUser(int userId);
-        User? GetUserTracks(int userId);
         List<User> ListAllUsers();
+        User? GetUser(int userId);
+        User? GetUserGenres(int userId);
+        User? GetUserArtists(int userId);
+        User? GetUserTracks(int userId);
 
         public void SaveTrack(string spotifyTrackId, string trackTitle, int userId, List<Artist> artists);
         public void SaveArtist(string spotifyArtistId, string artistName, int userId, int popularity, List<string> genres);
@@ -34,6 +33,7 @@ namespace NetifyAPI.Repositories
             return _context.Users.ToList();
         }
 
+        // Retrieves user with all connected favorites
         public User? GetUser(int userId)
         {
             User? user = _context.Users.
@@ -41,10 +41,30 @@ namespace NetifyAPI.Repositories
                 .Include(u => u.Genres)
                 .Include(u => u.Artists)
                 .Include(u => u.Tracks)
+                    .ThenInclude(t => t.Artists)
                 .SingleOrDefault();
             return user;
         }
 
+        // Retrieves user with only favorited genres (isolated to only genres to not fetch unecessary data)
+        public User? GetUserGenres(int userId) 
+        {
+            User? user = _context.Users.
+               Where(u => u.UserId == userId)
+               .Include(u => u.Genres)
+               .SingleOrDefault();
+            return user;
+        }
+        // Retrieves user with only favorited artists (isolated to only artists to not fetch unecessary data)
+        public User? GetUserArtists(int userId)
+        {
+            User? user = _context.Users.
+               Where(u => u.UserId == userId)
+               .Include(u => u.Artists)
+               .SingleOrDefault();
+            return user;
+        }
+        // Retrieves user with only favorited tracks and the artists associated with it (isolated to only tracks to not fetch unecessary data)
         public User? GetUserTracks(int userId)
         {
             User? user = _context.Users.
@@ -55,6 +75,7 @@ namespace NetifyAPI.Repositories
             return user;
         }
 
+        // Checks if user with username exists in db, if no saves new user to db. If yes, throws exception
         public void SaveUserToDatabase(UserDto userDto)
         {
             try

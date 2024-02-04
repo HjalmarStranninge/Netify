@@ -1,5 +1,4 @@
-﻿
-namespace NetifyAPI.Models.Viewmodels
+﻿namespace NetifyAPI.Models.Viewmodels
 {
     public class UserViewModel
     {
