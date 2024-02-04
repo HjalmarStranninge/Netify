@@ -360,8 +360,8 @@ namespace NetifyClient
 
                     var content = await response.Content.ReadAsStringAsync();
                     var artists = JsonSerializer.Deserialize<List<ArtistSearchViewModel>>(content);
-                    var artistSelected = await Utilities.ArtistSelection(artists, client, trackQuery);            
-                   
+                    var artistSelected = await Utilities.ArtistSelection(artists, client, trackQuery);
+
                     var artistDto = new ArtistDto
                     {
                         Name = artistSelected.ArtistName,

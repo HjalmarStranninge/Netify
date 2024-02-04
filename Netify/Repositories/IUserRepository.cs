@@ -202,8 +202,8 @@ namespace NetifyAPI.Repositories
                 .Include(u => u.Genres)
                 .SingleOrDefault();
 
-            // Adds the main genre of the artists to the users favorites.
-            if (user != null)
+            // Adds the main genre of the artists to the users favorites (only if genre is not already connected to user).
+            if (user != null && !user.Genres.Any(ug => ug.Name == genre.Name))
             {
                 try
                 {
