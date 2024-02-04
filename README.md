@@ -8,6 +8,7 @@ Welcome to the Netify Api. This projects involves creating a minimal API around 
 - [Functionality](#functionality-highlights)
 - [Using Endpoints](#using-endpoints)
 - [ER Model](#er-model)
+- [Insomnia](#insomnia)
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
 - [Api Reference](#api-reference)
@@ -44,6 +45,27 @@ Welcome to the Netify Api. This projects involves creating a minimal API around 
 ## ER model
 ![ER model Netify](https://github.com/HjalmarStranninge/Netify/assets/123236297/f284a0fd-26e8-426b-b178-a062b7e8e74c)
  
+## Insomnia
+- https://localhost:0000/users - All users
+
+![Skärmbild 2024-02-04 160723](https://github.com/HjalmarStranninge/Netify/assets/146171251/61bdf3b3-e0de-4a97-8ebb-aa21ab5de1df)
+
+- https://localhost:0000/user/{userId}" - Get a specific user
+
+![Skärmbild 2024-02-04 161059](https://github.com/HjalmarStranninge/Netify/assets/146171251/a08583f1-31ab-4eb1-a787-ebf1be963e2f)
+
+- https://localhost:0000/user/{userId}/genres" - Get a specific user and genres
+
+![Skärmbild 2024-02-04 161220](https://github.com/HjalmarStranninge/Netify/assets/146171251/46feafb9-6a77-4dc5-b754-53d21207337c)
+
+- https://localhost:0000/user/{userId}/artists" - Get a specific user and artists
+
+![Skärmbild 2024-02-04 161240](https://github.com/HjalmarStranninge/Netify/assets/146171251/f04e5a3d-37c1-41bc-bada-ef9c9cf875fe)
+
+- https://localhost:0000/user/{userId}/tracks" - Get a specific user and tracks
+
+![Skärmbild 2024-02-04 161259](https://github.com/HjalmarStranninge/Netify/assets/146171251/4c1ef84b-a309-476e-ae81-c8bda00bf090)
+
 ## Getting Started
 1. Clone the project.
 2. Open it in your development environment.
