@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using NetifyAPI.Data;
-using NetifyAPI.Models;
+﻿using NetifyAPI.Models;
 using NetifyAPI.Models.Dtos;
 using NetifyAPI.Models.Viewmodels;
 using System.Net;
@@ -52,7 +49,7 @@ namespace NetifyAPI.Handlers
             return Results.Json(searchUser);
         }
 
-        // View user
+        // View of user with all favorites
         public static IResult ViewUser(IUserRepository repository, int userId)
         {
             User? user = repository.GetUser(userId);
@@ -62,44 +59,64 @@ namespace NetifyAPI.Handlers
                 return Results.NotFound();
             }
 
-            // begränsning på hur mycket som ska visas (om vi nu vill ha det)
-            int genreLimit = 3;
-            int artistLimit = 3;
-            int trackLimit = 3;
-
             UserViewModel userView = new UserViewModel()
             {
                 Username = user.Username,
-                //Genres = user.Genres
-                //    .Select(g => new GenreViewModel()
-                //    {
-                //        Title = g.Title
-                //    })
-                //    .Take(genreLimit)
-                //    .ToList(),
+                Genres = user.Genres
+                    .Select(g => new GenreViewModel()
+                    {
+                        Title = g.Name
+                    })
+                    .ToList(),
                 Artists = user.Artists
                     .Select(a => new ArtistViewModel()
                     {
                         ArtistName = a.ArtistName,
                     })
-                    .Take(artistLimit)
                     .ToList(),
                 Tracks = user.Tracks
                     .Select(t => new TrackViewModel()
                     {
                         Title = t.Title,
-                        //Artists = t.Artists 
+                        Artists = t.Artists
+                        .Select(ta => new TrackArtistViewModel()
+                        {
+                            Name = ta.ArtistName,
+                        })
+                        .ToList(),
                     })
-                    .Take(trackLimit)
                     .ToList(),
             };
             return Results.Json(userView);
         }
 
+        // Lists all favorited genres of a user
+        public static IResult UserGenres(IUserRepository repository, int userId)
+        {
+            User? user = repository.GetUserGenres(userId);
 
+            if (user == null)
+            {
+                return Results.NotFound();
+            }
+
+            List<GenreViewModel> genreList = user.Genres
+                .Select(g => new GenreViewModel()
+                {
+                    Title = g.Name
+                })
+                .ToList();
+
+            if (genreList == null)
+            {
+                return Results.NotFound();
+            }
+            return Results.Json(genreList);
+        }
+        // Lists all favorited artists of a user
         public static IResult UserArtists(IUserRepository repository, int userId)
         {
-            User? user = repository.GetUser(userId);
+            User? user = repository.GetUserArtists(userId);
 
             if (user == null)
             {
@@ -119,7 +136,7 @@ namespace NetifyAPI.Handlers
             }
             return Results.Json(artistList);
         }
-
+        // Lists all favorited tracks of a user
         public static IResult UserTracks(IUserRepository repository, int userId)
         {
             User? user = repository.GetUserTracks(userId);
@@ -149,30 +166,7 @@ namespace NetifyAPI.Handlers
             return Results.Json(trackList);
         }
 
-        public static IResult UserGenres(IUserRepository repository, int userId)
-        {
-            User? user = repository.GetUser(userId);
-
-            if (user == null)
-            {
-                return Results.NotFound();
-            }
-
-            List<GenreViewModel> genreList = user.Genres
-                .Select(g => new GenreViewModel()
-                {
-                    Title = g.Name
-                })
-                .ToList();
-
-            if (genreList == null)
-            {
-                return Results.NotFound();
-            }
-            return Results.Json(genreList);
-        }
-
-
+        // Creates new user by checking if no user with same username exists in db. Returns Results.Conflict if yes.
         public static IResult CreateNewUser(IUserRepository repository, UserDto userDto)
         {
             try

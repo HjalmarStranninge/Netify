@@ -1,5 +1,4 @@
-﻿using NetifyAPI.Models.Dtos.Tracks;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace NetifyAPI.Models.Dtos.Artists
 {
@@ -7,7 +6,6 @@ namespace NetifyAPI.Models.Dtos.Artists
     {
         [JsonPropertyName("artists")]
         public ArtistContainer Artists { get; set; }
-
         
     }
 }

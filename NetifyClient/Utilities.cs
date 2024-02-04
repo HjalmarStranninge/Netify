@@ -1,14 +1,5 @@
-
-using NetifyAPI.Models;
-using NetifyAPI.Models.Dtos.Tracks;
-
 using NetifyClient.ApiModels.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace NetifyClient
 {
@@ -258,7 +249,6 @@ namespace NetifyClient
 
                         Console.WriteLine(menuOptions[i]);
                         Console.ResetColor();
-
                     }
                     else
                     {
@@ -267,7 +257,6 @@ namespace NetifyClient
                 }
 
                 key = Console.ReadKey();
-
 
                 switch (key.Key)
                 {
@@ -510,13 +499,10 @@ namespace NetifyClient
             {
                 Console.WriteLine($"        {artist.Genres.ToList()[i]}");
             }
-
-
         }
 
         public async static Task<ArtistSearchViewModel> ArtistSelection(List<ArtistSearchViewModel> menuOptions, HttpClient client, string query)
         {
-
             // Variables used for pagination.
 
             int selectedOption = 0;

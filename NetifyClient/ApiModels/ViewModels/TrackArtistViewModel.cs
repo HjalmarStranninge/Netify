@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+
 namespace NetifyClient.ApiModels.ViewModels
 {
     public class TrackArtistViewModel

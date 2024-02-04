@@ -1,11 +1,7 @@
 ﻿using NetifyAPI.Models.Dtos;
-using NetifyAPI.Models;
 using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
-using System.Net.Http;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using NetifyAPI.Models.Dtos.Tracks;
 using NetifyAPI.Models.Viewmodels;
 using NetifyAPI.Models.Dtos.Artists;

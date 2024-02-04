@@ -1,5 +1,4 @@
-﻿using NetifyAPI.Data;
-using NetifyAPI.Models;
+﻿using NetifyAPI.Models;
 using NetifyAPI.Models.Dtos.Tracks;
 using NetifyAPI.Repositories;
 using NetifyAPI.Spotify;
