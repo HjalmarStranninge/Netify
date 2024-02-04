@@ -11,9 +11,9 @@ namespace NetifyAPI.Repositories
     {
         List<User> ListAllUsers();
         User? GetUserFromDatabase(int userId);
-        User? GetUserFavoriteGenres(int userId);
-        User? GetUserFavoriteArtists(int userId);
-        User? GetUserFavoriteTracks(int userId);
+        User? GetUserForFavoriteGenres(int userId);
+        User? GetUserForFavoriteArtists(int userId);
+        User? GetUserForFavoriteTracks(int userId);
         Artist GetArtistFromDatabase(string spotifyArtistId);
 
         public void SaveTrackToDatabase(TrackDto track);
@@ -52,7 +52,7 @@ namespace NetifyAPI.Repositories
         }
 
         // Retrieves user with only favorited genres (isolated to only genres to not fetch unecessary data)
-        public User? GetUserFavoriteGenres(int userId)
+        public User? GetUserForFavoriteGenres(int userId)
         {
             User? user = _context.Users.
                Where(u => u.UserId == userId)
@@ -61,7 +61,7 @@ namespace NetifyAPI.Repositories
             return user;
         }
         // Retrieves user with only favorited artists (isolated to only artists to not fetch unecessary data)
-        public User? GetUserFavoriteArtists(int userId)
+        public User? GetUserForFavoriteArtists(int userId)
         {
             User? user = _context.Users.
                Where(u => u.UserId == userId)
@@ -70,7 +70,7 @@ namespace NetifyAPI.Repositories
             return user;
         }
         // Retrieves user with only favorited tracks and the artists associated with it (isolated to only tracks to not fetch unecessary data)
-        public User? GetUserFavoriteTracks(int userId)
+        public User? GetUserForFavoriteTracks(int userId)
         {
             User? user = _context.Users.
                Where(u => u.UserId == userId)
@@ -83,9 +83,8 @@ namespace NetifyAPI.Repositories
         public Artist GetArtistFromDatabase(string spotifyArtistId)
         {
             Artist artist = _context.Artists
-            .Where(u => u.SpotifyArtistId == spotifyArtistId)
-            .SingleOrDefault();
-
+                .Where(a => a.SpotifyArtistId == spotifyArtistId)
+                .SingleOrDefault();
             return artist;
         }
 
@@ -226,8 +225,10 @@ namespace NetifyAPI.Repositories
         {
             Artist favoriteArtist = GetArtistFromDatabase(spotifyArtistId);
 
+            Genre genre = favoriteArtist.MainGenre;
+
             // Adds the main genre of the artists to the users favorites (only if genre is not already connected to user).
-            if (user != null && !user.Genres.Any(ug => ug.Name == favoriteArtist.MainGenre.Name))
+            if (user != null && !user.Genres.Any(ug => ug.Name == genre.Name) && genre != null)
             {
                 try
                 {
@@ -236,7 +237,7 @@ namespace NetifyAPI.Repositories
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Unable to save genre. Exception: {ex}");
+                    Console.WriteLine($"Unable to save genre to favorites. Exception: {ex}");
                 }
             }
         }
