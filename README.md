@@ -73,7 +73,15 @@ https://localhost:7105/users - Add a new user
 
 ![Skärmbild 2024-02-04 163056](https://github.com/HjalmarStranninge/Netify/assets/146171251/40648a48-ae42-4f92-8787-4ea32c7b9f38)
 
+### Spotify requests
 
+https://localhost:7105/spotifytracksearch/kanye/5 - Get track/-s from spotify. In this case /kanye/5 - kanyes first 5 tracks
+
+![Skärmbild 2024-02-04 164023](https://github.com/HjalmarStranninge/Netify/assets/146171251/1cbc0875-6c33-4243-b034-975aeb9eb946)
+
+https://localhost:7105/spotifyartistsearch/demilovato/5 - Get artist from spotify. In this case /demilovato/5 - get demilovato and the 5 artist related to her
+
+![Skärmbild 2024-02-04 164430](https://github.com/HjalmarStranninge/Netify/assets/146171251/99e97f49-f02a-47b8-b9c1-06def5e225b5)
 
 ## Getting Started
 1. Clone the project.
