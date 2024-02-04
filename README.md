@@ -1,4 +1,4 @@
-<img src="https://github.com/HjalmarStranninge/Netify/assets/146171251/10e60763-fed9-4ebc-84cd-7ca298ba8479" alt="C# Logo" width="800" height="700">
+<img src="https://github.com/HjalmarStranninge/Netify/assets/146171251/9ae92942-1930-4812-8f86-5a8a5b1f60af" alt="C# Logo" width="800" height="700">
 
 # Netify
 Welcome to the Netify Api. This projects involves creating a minimal API around the Spotify open access api.
@@ -73,13 +73,22 @@ https://localhost:7105/users - Add a new user
 
 ![Skärmbild 2024-02-04 163056](https://github.com/HjalmarStranninge/Netify/assets/146171251/40648a48-ae42-4f92-8787-4ea32c7b9f38)
 
+https://localhost:0000/user/saveartist - Add a new artist
+
+![Skärmbild 2024-02-04 171825](https://github.com/HjalmarStranninge/Netify/assets/146171251/43265fba-d013-4eb2-b4db-9c63c1e1137e)
+
+https://localhost:0000/user/savetrack - Add a new track
+
+![Skärmbild 2024-02-04 173742](https://github.com/HjalmarStranninge/Netify/assets/146171251/c0aac0ca-dd1b-40ee-b340-eda0f8f235ec)
+
+
 ### Spotify requests
 
-https://localhost:7105/spotifytracksearch/kanye/5 - Get track/-s from spotify. In this case /kanye/5 - kanyes first 5 tracks
+https://localhost:0000/spotifytracksearch/kanye/5 - Get track/-s from spotify. In this case /kanye/5 - kanyes first 5 tracks
 
 ![Skärmbild 2024-02-04 164023](https://github.com/HjalmarStranninge/Netify/assets/146171251/1cbc0875-6c33-4243-b034-975aeb9eb946)
 
-https://localhost:7105/spotifyartistsearch/demilovato/5 - Get artist from spotify. In this case /demilovato/5 - get demilovato and the 5 artist related to her
+https://localhost:0000/spotifyartistsearch/demilovato/5 - Get artist from spotify. In this case /demilovato/5 - get demilovato and the 5 artist related to her
 
 ![Skärmbild 2024-02-04 164430](https://github.com/HjalmarStranninge/Netify/assets/146171251/99e97f49-f02a-47b8-b9c1-06def5e225b5)
 
