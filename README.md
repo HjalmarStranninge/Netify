@@ -1,4 +1,4 @@
-<img src="https://github.com/HjalmarStranninge/Netify/assets/146171251/10e60763-fed9-4ebc-84cd-7ca298ba8479" alt="C# Logo" width="600" height="400">
+<img src="https://github.com/HjalmarStranninge/Netify/assets/146171251/10e60763-fed9-4ebc-84cd-7ca298ba8479" alt="C# Logo" width="800" height="700">
 
 # Netify
 Welcome to the Netify Api. This projects involves creating a minimal API around the Spotify open access api.
