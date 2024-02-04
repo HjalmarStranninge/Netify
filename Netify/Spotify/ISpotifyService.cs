@@ -149,6 +149,7 @@ namespace NetifyAPI.Spotify
             }
             return artistViewModels;
         }
+        // Retrive the danceability of a track from the Spotify API.
         public async Task<double> GetDanceability(string trackId)
         {
             string accessToken = "";

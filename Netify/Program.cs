@@ -52,8 +52,8 @@ namespace Netify
 
 
             // SPOTIFY
-            app.MapGet("/spotifytracksearch/{query}/{offset}", TrackHandler.SearchTracks);
-            app.MapGet("/spotifyartistsearch/{query}/{offset}", ArtistHandler.SearchArtist);
+            app.MapGet("/spotifytracksearch/{query}/{offset}", TrackHandler.SearchTracks); // Search for a track from spotify
+            app.MapGet("/spotifyartistsearch/{query}/{offset}", ArtistHandler.SearchArtist); // Search for a artist from spotify
 
             app.Run();
         }
