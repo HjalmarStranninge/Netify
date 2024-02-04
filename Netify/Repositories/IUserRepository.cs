@@ -124,6 +124,7 @@ namespace NetifyAPI.Repositories
             }
             else
             {
+                // Adds the new track
                 newTrack = new Track
                 {
                     SpotifySongId = track.SpotifyTrackId,
@@ -143,7 +144,7 @@ namespace NetifyAPI.Repositories
                 }
             }
         }
-
+        // Saves the track to the correct user
         public void SaveTrackToUser(string spotifyTrackId, User user)
         {
             Track favoriteTrack = _context.Tracks
@@ -203,7 +204,7 @@ namespace NetifyAPI.Repositories
                 .Include(u => u.Genres)
                 .SingleOrDefault();
         }
-
+        // Saves the artist to the correct user
         public void SaveArtistToUser(string spotifyArtistId, User user)
         {
             Artist chosenArtist = GetArtistFromDatabase(spotifyArtistId);
@@ -221,7 +222,7 @@ namespace NetifyAPI.Repositories
                 }
             }
         }
-
+        // Saves the genre/-s to the correct user
         public void SaveArtistGenreToUser(string spotifyArtistId, User user)
         {
             Artist favoriteArtist = GetArtistFromDatabase(spotifyArtistId);

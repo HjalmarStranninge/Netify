@@ -37,7 +37,7 @@ namespace NetifyClient
             Console.Write("Press any key to continue...");
             Console.ReadKey();
         }
-
+        // Handles errors
         public static void CreateUserError(string errorMessage)
         {
             Utilities.HeaderFooter();

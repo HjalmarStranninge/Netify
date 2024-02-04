@@ -106,7 +106,7 @@ namespace NetifyAPI.Handlers
                     Title = g.Name
                 })
                 .ToList();
-
+            // If the list is empty, return error message
             if (genreList == null)
             {
                 return Results.NotFound();
@@ -129,7 +129,7 @@ namespace NetifyAPI.Handlers
                     ArtistName =a.ArtistName,
                 })
                 .ToList();
-
+            // If the list is empty, return error message
             if (artistList == null)
             {
                 return Results.NotFound();
@@ -158,7 +158,7 @@ namespace NetifyAPI.Handlers
                         .ToList(),
                 })
                 .ToList();
-
+            // If the list is empty, return error message
             if (trackList == null)
             {
                 return Results.NotFound();

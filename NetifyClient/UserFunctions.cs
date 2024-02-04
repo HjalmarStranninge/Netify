@@ -21,7 +21,7 @@ namespace NetifyClient
             };
 
             var selectedOption = Utilities.ArrowkeySelectionVertical(menuOptions);
-
+            // Switch statements to choose what to do
             switch (selectedOption)
             {
                 case 0:
@@ -87,6 +87,7 @@ namespace NetifyClient
 
                         switch (key.Key)
                         {
+                            // Decrement the page number only if there are more pages available
                             case ConsoleKey.LeftArrow:
                                 if (page > 1)
                                 {
@@ -163,6 +164,7 @@ namespace NetifyClient
 
                         switch (key.Key)
                         {
+                            // Decrement the page number only if there are more pages available
                             case ConsoleKey.LeftArrow:
                                 if (page > 1)
                                 {
@@ -231,6 +233,7 @@ namespace NetifyClient
 
                         switch (key.Key)
                         {
+                            // Decrement the page number only if there are more pages available
                             case ConsoleKey.LeftArrow:
                                 if (page > 1)
                                 {
@@ -300,6 +303,7 @@ namespace NetifyClient
                         artists.Add(artistDto);
 
                     }
+                    // Create an TrackDto object based on the selected track
                     var trackDto = new TrackDto
                     {
                         Title = trackSelected.Title,
@@ -362,6 +366,7 @@ namespace NetifyClient
                     var artists = JsonSerializer.Deserialize<List<ArtistSearchViewModel>>(content);
                     var artistSelected = await Utilities.ArtistSelection(artists, client, trackQuery);
 
+                    // Create an ArtistDto object based on the selected artist
                     var artistDto = new ArtistDto
                     {
                         Name = artistSelected.ArtistName,
